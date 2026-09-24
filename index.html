@@ -165,11 +165,11 @@
                 
                 <div class="grid grid-cols-3 gap-2 sm:gap-3 pt-2 font-mono">
                     <div class="bg-white brutal-border p-2 sm:p-3 brutal-shadow-sm">
-                        <div class="text-xl sm:text-2xl font-black">08+</div>
+                        <div id="dynamic-track-record" class="text-xl sm:text-2xl font-black">08+</div>
                         <div class="text-[9px] sm:text-[10px] text-neutral-600 uppercase">Years Track Record</div>
                     </div>
                     <div class="bg-white brutal-border p-2 sm:p-3 brutal-shadow-sm">
-                        <div class="text-xl sm:text-2xl font-black text-green-700">72.5%</div>
+                        <div id="dynamic-win-rate" class="text-xl sm:text-2xl font-black text-green-700">72.5%</div>
                         <div class="text-[9px] sm:text-[10px] text-neutral-600 uppercase">Avg Win Rate</div>
                     </div>
                     <div class="bg-white brutal-border p-2 sm:p-3 brutal-shadow-sm">
@@ -209,7 +209,7 @@
                     </div>
                     <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
                         <span class="text-neutral-400 font-semibold">OPERATIONAL ERA</span>
-                        <span class="text-white font-bold">Est. 2018 (8 Yrs Active)</span>
+                        <span id="dynamic-operational-era" class="text-white font-bold">Est. 2018 (8 Yrs Active)</span>
                     </div>
                     <div class="flex justify-between items-center pt-1">
                         <span class="text-neutral-400 font-semibold">NET REALIZED P/L</span>
@@ -552,7 +552,7 @@
             const DAILY_GROWTH_RATE = 0.0045; 
             
             function getCompoundedBaseCapital() {
-                const STORAGE_KEY = 'fu_terminal_init_data_v5';
+                const STORAGE_KEY = 'fu_terminal_init_data_v6';
                 const now = Date.now();
                 let savedData = localStorage.getItem(STORAGE_KEY);
                 let baseCapital = INITIAL_SEED_CAPITAL;
@@ -578,11 +578,8 @@
             let baseFunding = computedBaseCapital;
 
             const formattedBaseCap = `$${baseFunding.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            const shortBaseCap = `$${(baseFunding / 1000).toFixed(0)}K`;
             
             document.getElementById('header-base-capital').innerText = formattedBaseCap;
-            const heroCapStat = document.getElementById('hero-capital-stat');
-            if(heroCapStat) heroCapStat.innerText = shortBaseCap;
 
             // Core Canvas Sparkline Live Visualizer
             const sparkCanvas = document.getElementById('card-sparkline');
@@ -647,7 +644,6 @@
                     MarketStore.prices[sym] += jitter;
                 });
 
-                // Update sparkline with live gold price action
                 sparkPoints.push(MarketStore.prices['XAUUSD'] % 100);
                 if(sparkPoints.length > 20) sparkPoints.shift();
                 drawSparkline();
@@ -807,6 +803,27 @@
                 document.getElementById('header-free-margin').innerText = `$${freeMargin.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                 document.getElementById('header-margin-level').innerText = `${marginLevel}%`;
                 document.getElementById('header-total-pl').innerText = `${totalPL >= 0 ? '+' : ''}$${totalPL.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+                // Dynamic updates for top 3 visual stats cards
+                const currentYear = new Date().getFullYear();
+                const activeYears = currentYear - 2018;
+                const trackRecordEl = document.getElementById('dynamic-track-record');
+                if(trackRecordEl) trackRecordEl.innerText = `${activeYears < 10 ? '0' + activeYears : activeYears}+`;
+
+                const operationalEraEl = document.getElementById('dynamic-operational-era');
+                if(operationalEraEl) operationalEraEl.innerText = `Est. 2018 (${activeYears} Yrs Active)`;
+
+                const winRateEl = document.getElementById('dynamic-win-rate');
+                if(winRateEl) {
+                    let simulatedWinRate = 72.45 + Math.sin(Date.now() / 10000) * 1.5;
+                    winRateEl.innerText = `${simulatedWinRate.toFixed(1)}%`;
+                }
+
+                const heroCapStat = document.getElementById('hero-capital-stat');
+                if(heroCapStat) {
+                    let inK = (currentEquity / 1000).toFixed(0);
+                    heroCapStat.innerText = `$${inK}K`;
+                }
             });
 
             initLedger();
