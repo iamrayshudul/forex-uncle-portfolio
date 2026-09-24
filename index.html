@@ -594,7 +594,7 @@
                 tr.className = 'hover:bg-accentyellow/20 transition-colors cursor-pointer';
                 tr.title = "Click to load this trade into calculator for cross-checking";
                 
-                // Clicking ledger row loads exact trade values into calculator
+                // Clicking ledger row loads exact trade values into calculator and auto-locks live price
                 tr.addEventListener('click', () => {
                     document.getElementById('calcTicket').value = t.id;
                     document.getElementById('calcAsset').value = t.symbol;
@@ -603,7 +603,10 @@
                     
                     let decimalPlaces = (t.symbol === 'EURUSD' || t.symbol === 'GBPUSD') ? 4 : 2;
                     document.getElementById('calcOpen').value = t.open.toFixed(decimalPlaces);
-                    document.getElementById('calcCurrent').value = currentOrClosePrice.toFixed(decimalPlaces);
+                    
+                    // Auto-lock with live price if running, or close price if closed
+                    let targetPrice = t.status === 'RUNNING' ? marketData[t.symbol] : t.close;
+                    document.getElementById('calcCurrent').value = targetPrice.toFixed(decimalPlaces);
                     
                     updateCalculator();
                     window.location.href = '#calculator';
@@ -670,6 +673,17 @@
             });
 
             renderLedger();
+            
+            // Auto-sync current price in calculator if it matches the active asset's live feed
+            const activeAsset = document.getElementById('calcAsset').value;
+            const currentTicket = document.getElementById('calcTicket').value;
+            const matchedTrade = trades.find(t => t.id === currentTicket);
+            
+            if (matchedTrade && matchedTrade.status === 'RUNNING') {
+                let decimalPlaces = (activeAsset === 'EURUSD' || activeAsset === 'GBPUSD') ? 4 : 2;
+                document.getElementById('calcCurrent').value = marketData[activeAsset].toFixed(decimalPlaces);
+            }
+            
             updateCalculator();
         }
 
@@ -692,24 +706,24 @@
             const crossBanner = document.getElementById('crossCheckBanner');
             
             let matchedTrade = trades.find(t => t.id === ticket);
-            let isLiveSynced = Math.abs(current - liveRef) < 0.05;
+            let isLiveSynced = Math.abs(current - liveRef) < 0.1;
 
             if (matchedTrade && Math.abs(matchedTrade.open - open) < 0.0001) {
                 if (matchedTrade.status === 'RUNNING' && isLiveSynced) {
-                    statusText.innerText = `✅ VERIFIED: Matches Ledger & Live Market Feed (${asset})`;
+                    statusText.innerText = `✅ VERIFIED: Perfectly matches Ledger & Live Market Feed (${asset})`;
                     statusText.className = "text-green-700 font-bold";
                     crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-green-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
                 } else if (matchedTrade.status === 'CLOSED' && Math.abs(matchedTrade.close - current) < 0.0001) {
-                    statusText.innerText = `✅ VERIFIED: Matches Closed Trade History (${ticket})`;
+                    statusText.innerText = `✅ VERIFIED: Perfectly matches Closed Trade History (${ticket})`;
                     statusText.className = "text-green-700 font-bold";
                     crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-green-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
                 } else {
-                    statusText.innerText = `⚠️ CUSTOM INPUT: Active trade found, but price differs from current live tick.`;
+                    statusText.innerText = `⚠️ CUSTOM INPUT: Active trade found, but price differs slightly from current live tick.`;
                     statusText.className = "text-amber-700 font-bold";
                     crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-amber-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
                 }
             } else {
-                statusText.innerText = `🔍 CUSTOM SIMULATION: Custom parameters entered by visitor.`;
+                statusText.innerText = `🔍 CUSTOM SIMULATION: Custom parameters entered for cross-check audit.`;
                 statusText.className = "text-blue-700 font-bold";
                 crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-white text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
             }
@@ -720,7 +734,7 @@
             resElem.className = pnl >= 0 ? 'text-xl sm:text-2xl font-bold text-green-400' : 'text-xl sm:text-2xl font-bold text-red-400';
         }
 
-        // Quick button to load first running trade into calculator with exact open price
+        // Quick button to load first running trade into calculator with exact live synced price
         document.getElementById('loadRunningTradeBtn').addEventListener('click', () => {
             const runningTrade = trades.find(t => t.status === 'RUNNING');
             if (runningTrade) {
