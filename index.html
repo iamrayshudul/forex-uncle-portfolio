@@ -403,37 +403,34 @@
         </section>
     </main>
 
-    <footer class="bg-pureblack text-cream border-t-4 border-pureblack mt-16 sm:mt-24 font-mono">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 border-b-2 border-neutral-800">
-            <div class="lg:col-span-4 space-y-4">
-                <div class="flex items-center gap-3">
-                    <div class="bg-accentyellow text-pureblack px-2.5 py-1 font-bold brutal-border text-base">FU</div>
-                    <span class="font-extrabold text-xl sm:text-2xl tracking-wider uppercase">Forex Uncle</span>
-                </div>
-                <p class="text-xs text-neutral-400 leading-relaxed">
-                    Institutional-grade trading terminal simulation backed by 8+ years of market execution experience.
-                </p>
-            </div>
-            <div class="lg:col-span-4 space-y-3">
-                <h4 class="text-xs uppercase text-accentyellow font-bold tracking-widest">[ Navigation ]</h4>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <a href="#ledger" class="hover:text-accentyellow">&gt; Live Ledger</a>
-                    <a href="#chart-section" class="hover:text-accentyellow">&gt; Live Chart</a>
-                    <a href="#confluence" class="hover:text-accentyellow">&gt; Technical Matrix</a>
-                    <a href="#hire" class="hover:text-accentyellow">&gt; Hire Management</a>
+    <!-- Professional Clean & Realistic Institutional Footer -->
+    <footer class="bg-pureblack text-cream border-t-2 border-pureblack mt-16 sm:mt-24 font-mono">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6 border-b border-neutral-800">
+            <div class="flex items-center gap-3">
+                <div class="bg-accentyellow text-pureblack px-2.5 py-1 font-bold border border-pureblack text-sm">FU</div>
+                <div>
+                    <span class="font-bold text-sm tracking-widest uppercase block">Forex Uncle Terminal</span>
+                    <span class="text-[10px] text-neutral-400">Institutional Proprietary Framework</span>
                 </div>
             </div>
-            <div class="lg:col-span-4 space-y-4 bg-neutral-900 p-4 sm:p-5 brutal-border border-neutral-800">
-                <div class="flex justify-between items-center text-xs border-b border-neutral-800 pb-2">
-                    <span class="text-neutral-400">SERVER CLOCK (UTC):</span>
-                    <span id="footer-clock" class="text-accentyellow font-bold">00:00:00</span>
-                </div>
-                <p class="text-neutral-400 text-[11px]">All portfolio records verified via real-time central state sync.</p>
+
+            <div class="flex items-center gap-6 text-xs text-neutral-300">
+                <a href="#ledger" class="hover:text-accentyellow transition-colors">Ledger</a>
+                <a href="#chart-section" class="hover:text-accentyellow transition-colors">Charts</a>
+                <a href="#confluence" class="hover:text-accentyellow transition-colors">Matrix</a>
+                <a href="#hire" class="hover:text-accentyellow transition-colors">Contact</a>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs bg-neutral-900 px-3 py-1.5 border border-neutral-800">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-neutral-400">SERVER TIME (UTC):</span>
+                <span id="footer-clock" class="text-accentyellow font-bold">00:00:00</span>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500 text-center md:text-left">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-neutral-500">
             <p>&copy; 2018 - 2026 FOREX UNCLE. ALL RIGHTS RESERVED.</p>
-            <p class="text-accentyellow font-bold">VERIFIED PROP DESK &bull; 8 YRS EXP</p>
+            <p class="text-neutral-400">SECURE QUANTITATIVE INFRASTRUCTURE &bull; DIRECT FEED</p>
         </div>
     </footer>
 
@@ -581,7 +578,6 @@
             
             document.getElementById('header-base-capital').innerText = formattedBaseCap;
 
-            // Core Canvas Sparkline Live Visualizer
             const sparkCanvas = document.getElementById('card-sparkline');
             const sparkCtx = sparkCanvas ? sparkCanvas.getContext('2d') : null;
             let sparkPoints = [20, 25, 22, 30, 28, 35, 32, 40, 38, 45, 42, 50, 48, 55, 52, 60];
@@ -804,7 +800,6 @@
                 document.getElementById('header-margin-level').innerText = `${marginLevel}%`;
                 document.getElementById('header-total-pl').innerText = `${totalPL >= 0 ? '+' : ''}$${totalPL.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-                // Dynamic updates for top 3 visual stats cards
                 const currentYear = new Date().getFullYear();
                 const activeYears = currentYear - 2018;
                 const trackRecordEl = document.getElementById('dynamic-track-record');
