@@ -32,7 +32,6 @@
             background-color: #f4f4f0;
             color: #000000;
             overflow-x: hidden;
-            cursor: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -40,24 +39,30 @@
         }
         input, select, textarea { cursor: text; user-select: text; }
 
+        @media (min-width: 1024px) {
+            body { cursor: none; }
+        }
+
         .brutal-border { border: 2px solid #000000; }
         .brutal-shadow { box-shadow: 4px 4px 0px #000000; }
         .brutal-shadow-sm { box-shadow: 2px 2px 0px #000000; }
 
-        #cursor-dot {
-            position: fixed; top: 0; left: 0; width: 8px; height: 8px;
-            background-color: #000000; border-radius: 50%; pointer-events: none;
-            z-index: 99999; transform: translate(-50%, -50%); transition: transform 0.1s ease;
+        @media (min-width: 1024px) {
+            #cursor-dot {
+                position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+                background-color: #000000; border-radius: 50%; pointer-events: none;
+                z-index: 99999; transform: translate(-50%, -50%); transition: transform 0.1s ease;
+            }
+            #cursor-ring {
+                position: fixed; top: 0; left: 0; width: 42px; height: 42px;
+                border: 2px solid #000000; border-radius: 50%; pointer-events: none;
+                z-index: 99998; transform: translate(-50%, -50%);
+                background: rgba(255, 222, 0, 0.15); box-shadow: 0 0 25px rgba(255, 222, 0, 0.4);
+                transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            body.hovering #cursor-ring { width: 75px; height: 75px; background: rgba(255, 222, 0, 0.35); border-width: 3px; }
+            body.hovering #cursor-dot { transform: translate(-50%, -50%) scale(1.8); background-color: #ffde00; }
         }
-        #cursor-ring {
-            position: fixed; top: 0; left: 0; width: 42px; height: 42px;
-            border: 2px solid #000000; border-radius: 50%; pointer-events: none;
-            z-index: 99998; transform: translate(-50%, -50%);
-            background: rgba(255, 222, 0, 0.15); box-shadow: 0 0 25px rgba(255, 222, 0, 0.4);
-            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        body.hovering #cursor-ring { width: 75px; height: 75px; background: rgba(255, 222, 0, 0.35); border-width: 3px; }
-        body.hovering #cursor-dot { transform: translate(-50%, -50%) scale(1.8); background-color: #ffde00; }
 
         .tilt-card { transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; transform-style: preserve-3d; }
         .advanced-hover {
@@ -87,20 +92,21 @@
 </head>
 <body class="font-sans antialiased selection:bg-accentyellow selection:text-pureblack">
 
-    <div id="cursor-dot"></div>
-    <div id="cursor-ring"></div>
+    <div id="cursor-dot" class="hidden lg:block"></div>
+    <div id="cursor-ring" class="hidden lg:block"></div>
 
-    <div class="bg-pureblack text-cream text-xs font-mono py-2 px-3 text-center tracking-wider border-b-2 border-pureblack flex justify-center items-center gap-4">
+    <!-- Responsive Top Telemetry Bar -->
+    <div class="bg-pureblack text-cream text-[9px] sm:text-xs font-mono py-2 px-2 sm:px-3 text-center tracking-wider border-b-2 border-pureblack flex flex-wrap justify-center items-center gap-1.5 sm:gap-4">
         <span>MT5_SRV: EXNESS-REAL-US09</span>
-        <span>&bull;</span>
-        <span>SOCKET: <span id="socket-status" class="text-accentyellow">WSS://LIVE-FEED.FINNHUB.IO:443</span></span>
-        <span>&bull;</span>
+        <span class="hidden sm:inline">&bull;</span>
+        <span class="truncate max-w-[200px] sm:max-w-none">SOCKET: <span id="socket-status" class="text-accentyellow">WSS://LIVE-FEED.FINNHUB.IO:443</span></span>
+        <span class="hidden sm:inline">&bull;</span>
         <span>LATENCY: <span class="text-accentyellow">11.4ms</span></span>
     </div>
 
     <!-- Live Moving Currency Ticker Bar -->
-    <div class="bg-accentyellow text-pureblack border-b-2 border-pureblack overflow-hidden py-2 font-mono text-xs font-bold">
-        <div class="animate-ticker flex gap-8 items-center whitespace-nowrap px-4">
+    <div class="bg-accentyellow text-pureblack border-b-2 border-pureblack overflow-hidden py-1.5 sm:py-2 font-mono text-[11px] sm:text-xs font-bold">
+        <div class="animate-ticker flex gap-6 sm:gap-8 items-center whitespace-nowrap px-4">
             <span class="flex items-center gap-1">🟢 XAUUSD: <span id="ticker-xau" class="font-black">4,277.00</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
             <span>&bull;</span>
             <span class="flex items-center gap-1">🟢 EURUSD: <span id="ticker-eur" class="font-black">1.1398</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
@@ -120,22 +126,22 @@
     </div>
 
     <header class="border-b-2 border-pureblack bg-cream sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-3 group">
-                <div class="bg-accentyellow brutal-border px-3 py-1 font-mono font-bold text-lg brutal-shadow-sm">FU</div>
-                <span class="font-bold text-2xl tracking-tighter uppercase">Forex Uncle</span>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 sm:gap-3 group">
+                <div class="bg-accentyellow brutal-border px-2 sm:px-3 py-1 font-mono font-bold text-base sm:text-lg brutal-shadow-sm">FU</div>
+                <span class="font-bold text-xl sm:text-2xl tracking-tighter uppercase">Forex Uncle</span>
             </a>
-            <nav class="hidden md:flex items-center gap-4 font-mono text-sm font-semibold">
-                <a href="#ledger" class="px-4 py-2 brutal-border bg-white advanced-hover">LIVE LEDGER</a>
-                <a href="#chart-section" class="px-4 py-2 brutal-border bg-white advanced-hover">LIVE CHART</a>
-                <a href="#confluence" class="px-4 py-2 brutal-border bg-white advanced-hover">TECHNICAL MATRIX</a>
-                <a href="#hire" class="bg-accentyellow brutal-border px-5 py-2 brutal-shadow-sm hover:bg-pureblack hover:text-cream transition-all">HIRE ME</a>
+            <nav class="hidden md:flex items-center gap-3 lg:gap-4 font-mono text-xs sm:text-sm font-semibold">
+                <a href="#ledger" class="px-3 py-2 brutal-border bg-white advanced-hover">LIVE LEDGER</a>
+                <a href="#chart-section" class="px-3 py-2 brutal-border bg-white advanced-hover">LIVE CHART</a>
+                <a href="#confluence" class="px-3 py-2 brutal-border bg-white advanced-hover">TECHNICAL MATRIX</a>
+                <a href="#hire" class="bg-accentyellow brutal-border px-4 py-2 brutal-shadow-sm hover:bg-pureblack hover:text-cream transition-all">HIRE ME</a>
             </nav>
-            <button id="menu-btn" class="md:hidden bg-accentyellow brutal-border p-2 brutal-shadow-sm">
+            <button id="menu-btn" class="md:hidden bg-accentyellow brutal-border p-2 brutal-shadow-sm focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-cream border-b-2 border-pureblack px-4 pt-2 pb-6 space-y-3 font-mono text-sm font-semibold">
+        <div id="mobile-menu" class="hidden md:hidden bg-cream border-b-2 border-pureblack px-4 pt-3 pb-6 space-y-3 font-mono text-sm font-semibold">
             <a href="#ledger" class="block px-3 py-2 brutal-border bg-white">LIVE LEDGER</a>
             <a href="#chart-section" class="block px-3 py-2 brutal-border bg-white">LIVE CHART</a>
             <a href="#confluence" class="block px-3 py-2 brutal-border bg-white">TECHNICAL MATRIX</a>
@@ -144,39 +150,39 @@
     </header>
 
     <main>
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div class="lg:col-span-7 space-y-6">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4 sm:space-y-6">
                 <div class="inline-flex items-center gap-2 bg-accentyellow brutal-border px-3 py-1 font-mono text-xs font-bold uppercase brutal-shadow-sm">
                     <span class="w-2 h-2 rounded-full bg-pureblack animate-ping"></span>
                     Institutional Execution Core (Live Market Feed)
                 </div>
-                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight uppercase leading-none">
-                    Algorithmic Precision <span class="bg-accentyellow px-2 border-2 border-pureblack">Real Execution.</span>
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight uppercase leading-none">
+                    Algorithmic Precision <span class="bg-accentyellow px-2 border-2 border-pureblack inline-block mt-1">Real Execution.</span>
                 </h1>
-                <p class="text-lg font-medium max-w-xl text-neutral-800">
+                <p class="text-base sm:text-lg font-medium max-w-xl text-neutral-800">
                     Executing disciplined risk parameters across XAUUSD & major currencies with maximized profit potential and minimal downside risk.
                 </p>
                 
-                <div class="grid grid-cols-3 gap-3 pt-2 font-mono">
-                    <div class="bg-white brutal-border p-3 brutal-shadow-sm">
-                        <div class="text-2xl font-black">08+</div>
-                        <div class="text-[10px] text-neutral-600 uppercase">Years Track Record</div>
+                <div class="grid grid-cols-3 gap-2 sm:gap-3 pt-2 font-mono">
+                    <div class="bg-white brutal-border p-2 sm:p-3 brutal-shadow-sm">
+                        <div class="text-xl sm:text-2xl font-black">08+</div>
+                        <div class="text-[9px] sm:text-[10px] text-neutral-600 uppercase">Years Track Record</div>
                     </div>
-                    <div class="bg-white brutal-border p-3 brutal-shadow-sm">
-                        <div class="text-2xl font-black text-green-700">72.5%</div>
-                        <div class="text-[10px] text-neutral-600 uppercase">Avg Win Rate</div>
+                    <div class="bg-white brutal-border p-2 sm:p-3 brutal-shadow-sm">
+                        <div class="text-xl sm:text-2xl font-black text-green-700">72.5%</div>
+                        <div class="text-[9px] sm:text-[10px] text-neutral-600 uppercase">Avg Win Rate</div>
                     </div>
-                    <div class="bg-white brutal-border p-3 brutal-shadow-sm">
-                        <div id="hero-capital-stat" class="text-2xl font-black">$350K</div>
-                        <div class="text-[10px] text-neutral-600 uppercase">Managed Desk</div>
+                    <div class="bg-white brutal-border p-2 sm:p-3 brutal-shadow-sm">
+                        <div id="hero-capital-stat" class="text-xl sm:text-2xl font-black">$350K</div>
+                        <div class="text-[9px] sm:text-[10px] text-neutral-600 uppercase">Managed Desk</div>
                     </div>
                 </div>
             </div>
 
-            <div class="lg:col-span-5 bg-pureblack text-cream brutal-border brutal-shadow p-5 font-mono tilt-card">
+            <div class="lg:col-span-5 bg-pureblack text-cream brutal-border brutal-shadow p-4 sm:p-5 font-mono tilt-card">
                 <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-accentyellow font-bold tracking-widest">[MT5_TERM // ACC_948255]</span>
+                        <span class="text-[11px] sm:text-xs text-accentyellow font-bold tracking-widest">[MT5_TERM // ACC_948255]</span>
                     </div>
                     <div class="flex items-center gap-2 text-[10px] text-neutral-400">
                         <span>LEV: <strong class="text-white">1:500</strong></span>
@@ -187,11 +193,11 @@
                 <div class="space-y-3 text-xs">
                     <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
                         <span class="text-neutral-400 font-semibold">INITIAL BASE CAPITAL</span>
-                        <span id="header-base-capital" class="text-white font-bold text-sm tracking-wider">$350,000.00</span>
+                        <span id="header-base-capital" class="text-white font-bold text-xs sm:text-sm tracking-wider">$350,000.00</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
                         <span class="text-neutral-400 font-semibold">CURRENT EQUITY (LIVE)</span>
-                        <span id="header-total-funding" class="text-accentyellow font-bold text-sm tracking-wider">$378,250.00</span>
+                        <span id="header-total-funding" class="text-accentyellow font-bold text-xs sm:text-sm tracking-wider">$378,250.00</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
                         <span class="text-neutral-400 font-semibold">FREE MARGIN</span>
@@ -207,11 +213,11 @@
                     </div>
                     <div class="flex justify-between items-center pt-1">
                         <span class="text-neutral-400 font-semibold">NET REALIZED P/L</span>
-                        <span id="header-total-pl" class="text-accentyellow font-bold text-base">+$28,250.00</span>
+                        <span id="header-total-pl" class="text-accentyellow font-bold text-sm sm:text-base">+$28,250.00</span>
                     </div>
                 </div>
 
-                <div class="mt-4 pt-3 border-t border-neutral-800 flex justify-between items-center text-[10px] text-neutral-500">
+                <div class="mt-4 pt-3 border-t border-neutral-800 flex flex-wrap justify-between items-center text-[10px] text-neutral-500 gap-1">
                     <span>FRAMEWORK: HIGH PROFIT / LOW LOSS</span>
                     <span class="text-accentyellow">OPTIMIZED RR SYNC</span>
                 </div>
@@ -219,26 +225,26 @@
         </section>
 
         <!-- Live Execution Ledger -->
-        <section id="ledger" class="max-w-7xl mx-auto px-4 sm:px-6 py-12 scroll-mt-24">
-            <div class="mb-8 flex justify-between items-end">
+        <section id="ledger" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 scroll-mt-24">
+            <div class="mb-6 sm:mb-8 flex justify-between items-end">
                 <div>
                     <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Audit Log</span>
-                    <h2 class="text-3xl font-extrabold uppercase mt-3">Live Execution Ledger (Max Profit / Low Loss)</h2>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold uppercase mt-3">Live Execution Ledger</h2>
                 </div>
             </div>
-            <div class="bg-cream brutal-border brutal-shadow overflow-x-auto">
-                <table class="w-full text-left border-collapse font-mono text-sm min-w-[750px]">
+            <div class="bg-cream brutal-border brutal-shadow overflow-x-auto w-full">
+                <table class="w-full text-left border-collapse font-mono text-xs sm:text-sm min-w-[750px]">
                     <thead>
                         <tr class="bg-pureblack text-cream border-b-2 border-pureblack">
-                            <th class="p-4">TICKET ID</th>
-                            <th class="p-4">ASSET</th>
-                            <th class="p-4">TYPE</th>
-                            <th class="p-4">LOTS</th>
-                            <th class="p-4">OPEN PRICE</th>
-                            <th class="p-4">CURRENT PRICE (LIVE)</th>
-                            <th class="p-4">SL / TP STATUS</th>
-                            <th class="p-4">STATUS</th>
-                            <th class="p-4 text-right">NET P/L ($)</th>
+                            <th class="p-3 sm:p-4">TICKET ID</th>
+                            <th class="p-3 sm:p-4">ASSET</th>
+                            <th class="p-3 sm:p-4">TYPE</th>
+                            <th class="p-3 sm:p-4">LOTS</th>
+                            <th class="p-3 sm:p-4">OPEN PRICE</th>
+                            <th class="p-3 sm:p-4">CURRENT PRICE</th>
+                            <th class="p-3 sm:p-4">SL / TP STATUS</th>
+                            <th class="p-3 sm:p-4">STATUS</th>
+                            <th class="p-3 sm:p-4 text-right">NET P/L ($)</th>
                         </tr>
                     </thead>
                     <tbody id="ledger-tbody" class="divide-y-2 divide-pureblack"></tbody>
@@ -247,15 +253,15 @@
         </section>
 
         <!-- Synced Canvas Chart Section -->
-        <section id="chart-section" class="max-w-7xl mx-auto px-4 sm:px-6 py-12 scroll-mt-24">
-            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <section id="chart-section" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 scroll-mt-24">
+            <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                 <div>
                     <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Market Feed</span>
-                    <h2 class="text-3xl font-extrabold uppercase mt-3">Interactive Multi-Asset Chart</h2>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold uppercase mt-3">Interactive Multi-Asset Chart</h2>
                 </div>
-                <div class="flex items-center gap-2 font-mono text-sm">
-                    <label for="asset-selector" class="font-bold uppercase text-xs">Select Pair:</label>
-                    <select id="asset-selector" class="brutal-border px-3 py-2 bg-white font-bold focus:outline-none focus:bg-accentyellow transition-colors">
+                <div class="flex items-center gap-2 font-mono text-sm w-full sm:w-auto">
+                    <label for="asset-selector" class="font-bold uppercase text-xs whitespace-nowrap">Select Pair:</label>
+                    <select id="asset-selector" class="brutal-border px-3 py-2 bg-white font-bold focus:outline-none focus:bg-accentyellow transition-colors w-full sm:w-auto">
                         <option value="XAUUSD">XAUUSD (Gold)</option>
                         <option value="EURUSD">EURUSD</option>
                         <option value="GBPUSD">GBPUSD</option>
@@ -263,24 +269,24 @@
                     </select>
                 </div>
             </div>
-            <div class="bg-white brutal-border brutal-shadow p-4">
-                <div id="tradingview-container" class="w-full h-[450px]"></div>
+            <div class="bg-white brutal-border brutal-shadow p-2 sm:p-4">
+                <div id="tradingview-container" class="w-full h-[350px] sm:h-[450px]"></div>
             </div>
         </section>
 
         <!-- Technical Analysis Matrix Section -->
-        <section id="confluence" class="max-w-7xl mx-auto px-4 sm:px-6 py-12 scroll-mt-24">
-            <div class="mb-8 flex justify-between items-end">
+        <section id="confluence" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 scroll-mt-24">
+            <div class="mb-6 sm:mb-8 flex justify-between items-end">
                 <div>
                     <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Live API Engine</span>
-                    <h2 class="text-3xl font-extrabold uppercase mt-3">Real-Time Technical Analysis Matrix</h2>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold uppercase mt-3">Technical Analysis Matrix</h2>
                 </div>
-                <div class="hidden sm:block font-mono text-xs font-bold bg-accentyellow px-3 py-1 brutal-border brutal-shadow-sm">
+                <div class="hidden md:block font-mono text-xs font-bold bg-accentyellow px-3 py-1 brutal-border brutal-shadow-sm">
                     API SYNC: <span class="text-green-700 animate-pulse">TRADINGVIEW LIVE FEED</span>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 font-mono">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 font-mono">
                 <div class="bg-white brutal-border brutal-shadow p-4">
                     <div class="text-xs font-bold mb-2 pb-2 border-b-2 border-pureblack flex justify-between">
                         <span>XAUUSD (GOLD)</span>
@@ -333,21 +339,21 @@
         </section>
 
         <!-- Hire Section -->
-        <section id="hire" class="max-w-4xl mx-auto px-4 sm:px-6 py-12 scroll-mt-24">
-            <div class="bg-accentyellow brutal-border brutal-shadow p-8 text-center font-mono">
-                <h3 class="text-3xl font-extrabold uppercase mb-4">Connect for Trade Management</h3>
-                <p class="text-sm mb-8 max-w-xl mx-auto font-medium">
+        <section id="hire" class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 scroll-mt-24">
+            <div class="bg-accentyellow brutal-border brutal-shadow p-6 sm:p-8 text-center font-mono">
+                <h3 class="text-2xl sm:text-3xl font-extrabold uppercase mb-4">Connect for Trade Management</h3>
+                <p class="text-xs sm:text-sm mb-6 sm:mb-8 max-w-xl mx-auto font-medium">
                     Backed by 8 years of institutional market experience. Inquire directly regarding capital allocation, custom risk frameworks, and professional account supervision.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="mailto:acceptableshawon+fu@gmail.com?subject=Capital%20Allocation%20Inquiry" 
-                       class="bg-pureblack text-cream px-6 py-3 font-bold brutal-border brutal-shadow-sm hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2">
+                       class="bg-pureblack text-cream px-6 py-3 font-bold brutal-border brutal-shadow-sm hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2 text-xs sm:text-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         EMAIL VIA GMAIL
                     </a>
                     <a href="https://wa.me/8801795186749?text=Hi%20Forex%20Uncle,%20I%20want%20to%20discuss%20portfolio%20allocation." 
                        target="_blank" 
-                       class="bg-green-600 text-white px-6 py-3 font-bold brutal-border brutal-shadow-sm hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2">
+                       class="bg-green-600 text-white px-6 py-3 font-bold brutal-border brutal-shadow-sm hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2 text-xs sm:text-sm">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                         CHAT ON WHATSAPP
                     </a>
@@ -356,12 +362,12 @@
         </section>
     </main>
 
-    <footer class="bg-pureblack text-cream border-t-4 border-pureblack mt-24 font-mono">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 border-b-2 border-neutral-800">
+    <footer class="bg-pureblack text-cream border-t-4 border-pureblack mt-16 sm:mt-24 font-mono">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 border-b-2 border-neutral-800">
             <div class="lg:col-span-4 space-y-4">
                 <div class="flex items-center gap-3">
                     <div class="bg-accentyellow text-pureblack px-2.5 py-1 font-bold brutal-border text-base">FU</div>
-                    <span class="font-extrabold text-2xl tracking-wider uppercase">Forex Uncle</span>
+                    <span class="font-extrabold text-xl sm:text-2xl tracking-wider uppercase">Forex Uncle</span>
                 </div>
                 <p class="text-xs text-neutral-400 leading-relaxed">
                     Institutional-grade trading terminal simulation backed by 8+ years of market execution experience.
@@ -376,7 +382,7 @@
                     <a href="#hire" class="hover:text-accentyellow">&gt; Hire Management</a>
                 </div>
             </div>
-            <div class="lg:col-span-4 space-y-4 bg-neutral-900 p-5 brutal-border border-neutral-800">
+            <div class="lg:col-span-4 space-y-4 bg-neutral-900 p-4 sm:p-5 brutal-border border-neutral-800">
                 <div class="flex justify-between items-center text-xs border-b border-neutral-800 pb-2">
                     <span class="text-neutral-400">SERVER CLOCK (UTC):</span>
                     <span id="footer-clock" class="text-accentyellow font-bold">00:00:00</span>
@@ -384,7 +390,7 @@
                 <p class="text-neutral-400 text-[11px]">All portfolio records verified via real-time central state sync.</p>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500 text-center md:text-left">
             <p>&copy; 2018 - 2026 FOREX UNCLE. ALL RIGHTS RESERVED.</p>
             <p class="text-accentyellow font-bold">VERIFIED PROP DESK &bull; 8 YRS EXP</p>
         </div>
@@ -458,40 +464,44 @@
             setInterval(updateFooterClock, 1000);
             updateFooterClock();
 
-            const cursorDot = document.getElementById('cursor-dot');
-            const cursorRing = document.getElementById('cursor-ring');
-            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-            let ringX = mouseX, ringY = mouseY, dotX = mouseX, dotY = mouseY;
+            // Only initialize custom cursor on desktop devices (non-touch)
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            if (window.innerWidth >= 1024 && !isTouchDevice) {
+                const cursorDot = document.getElementById('cursor-dot');
+                const cursorRing = document.getElementById('cursor-ring');
+                let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+                let ringX = mouseX, ringY = mouseY, dotX = mouseX, dotY = mouseY;
 
-            window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+                window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
 
-            function renderCursor() {
-                dotX += (mouseX - dotX) * 0.7;
-                dotY += (mouseY - dotY) * 0.7;
-                cursorDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
-                ringX += (mouseX - ringX) * 0.18;
-                ringY += (mouseY - ringY) * 0.18;
-                cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
-                requestAnimationFrame(renderCursor);
+                function renderCursor() {
+                    dotX += (mouseX - dotX) * 0.7;
+                    dotY += (mouseY - dotY) * 0.7;
+                    cursorDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
+                    ringX += (mouseX - ringX) * 0.18;
+                    ringY += (mouseY - ringY) * 0.18;
+                    cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+                    requestAnimationFrame(renderCursor);
+                }
+                renderCursor();
+
+                document.querySelectorAll('a, button, input, select, textarea, tr').forEach(target => {
+                    target.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                    target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+                });
+
+                document.querySelectorAll('.tilt-card').forEach(card => {
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+                        const rx = -((y - rect.height/2) / 15), ry = (x - rect.width/2) / 15;
+                        card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+                    });
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+                    });
+                });
             }
-            renderCursor();
-
-            document.querySelectorAll('a, button, input, select, textarea, tr').forEach(target => {
-                target.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-                target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-            });
-
-            document.querySelectorAll('.tilt-card').forEach(card => {
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left, y = e.clientY - rect.top;
-                    const rx = -((y - rect.height/2) / 15), ry = (x - rect.width/2) / 15;
-                    card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
-                });
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
-                });
-            });
 
             const menuBtn = document.getElementById('menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
@@ -584,7 +594,7 @@
             const chartContainer = document.getElementById('tradingview-container');
             const chart = LightweightCharts.createChart(chartContainer, {
                 width: chartContainer.clientWidth,
-                height: 450,
+                height: chartContainer.clientHeight || 450,
                 layout: { background: { type: 'solid', color: '#ffffff' }, textColor: '#000000' },
                 grid: { vertLines: { color: '#e1e1d8' }, horzLines: { color: '#e1e1d8' } },
             });
@@ -612,7 +622,6 @@
                 loadChartData(e.target.value);
             });
 
-            // Adjusted trades: Losses are very small (-$12 to -$25), Profits are very high (+$450 to +$1,450)
             let trades = [
                 { id: '#948255', symbol: 'XAUUSD', type: 'BUY', lots: 0.50, open: 4275.00, status: 'RUNNING', targetProfit: 1250, stopLoss: -18, commission: -1.50 },
                 { id: '#948254', symbol: 'EURUSD', type: 'SELL', lots: 1.00, open: 1.1390, status: 'RUNNING', targetProfit: 850, stopLoss: -15, commission: -1.00 },
@@ -623,7 +632,7 @@
 
             function calculateProfit(symbol, type, lots, open, current, commission = 0) {
                 let diff = (type === 'BUY') ? (current - open) : (open - current);
-                let multiplier = (symbol === 'XAUUSD') ? 350 : (symbol === 'USDJPY' ? 2500 : 8000); // Scaled up multiplier for massive profits
+                let multiplier = (symbol === 'XAUUSD') ? 350 : (symbol === 'USDJPY' ? 2500 : 8000);
                 let gross = diff * lots * multiplier;
                 return gross + commission;
             }
@@ -639,15 +648,15 @@
                     tr.className = 'hover:bg-accentyellow/25 transition-colors duration-200';
                     
                     tr.innerHTML = `
-                        <td class="p-4 font-bold">${t.id}</td>
-                        <td class="p-4 font-bold">${t.symbol}</td>
-                        <td class="p-4 ${t.type === 'BUY' ? 'text-green-700' : 'text-red-700'} font-bold">${t.type}</td>
-                        <td class="p-4">${t.lots.toFixed(2)}</td>
-                        <td class="p-4">${t.open.toFixed(t.symbol === 'XAUUSD' ? 2 : (t.symbol === 'USDJPY' ? 2 : 4))}</td>
-                        <td class="p-4 font-mono font-bold current-col">0.00</td>
-                        <td class="p-4 text-xs text-neutral-700 font-semibold sltp-col">SL: -$${Math.abs(t.stopLoss)} | TP: +$${t.targetProfit}</td>
-                        <td class="p-4 status-col"><span class="bg-green-500 px-2 py-0.5 text-xs font-bold text-black animate-pulse">LIVE</span></td>
-                        <td class="p-4 text-right font-bold pnl-col">0.00</td>
+                        <td class="p-3 sm:p-4 font-bold">${t.id}</td>
+                        <td class="p-3 sm:p-4 font-bold">${t.symbol}</td>
+                        <td class="p-3 sm:p-4 ${t.type === 'BUY' ? 'text-green-700' : 'text-red-700'} font-bold">${t.type}</td>
+                        <td class="p-3 sm:p-4">${t.lots.toFixed(2)}</td>
+                        <td class="p-3 sm:p-4">${t.open.toFixed(t.symbol === 'XAUUSD' ? 2 : (t.symbol === 'USDJPY' ? 2 : 4))}</td>
+                        <td class="p-3 sm:p-4 font-mono font-bold current-col">0.00</td>
+                        <td class="p-3 sm:p-4 text-[11px] sm:text-xs text-neutral-700 font-semibold sltp-col">SL: -$${Math.abs(t.stopLoss)} | TP: +$${t.targetProfit}</td>
+                        <td class="p-3 sm:p-4 status-col"><span class="bg-green-500 px-2 py-0.5 text-xs font-bold text-black animate-pulse">LIVE</span></td>
+                        <td class="p-3 sm:p-4 text-right font-bold pnl-col">0.00</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -673,7 +682,7 @@
                     if(el) el.innerText = price.toFixed(2);
                 }
 
-                let totalPL = 34250.00; // Adjusted base high profit accumulator
+                let totalPL = 34250.00;
 
                 trades.forEach(t => {
                     let currentVal = MarketStore.prices[t.symbol];
@@ -711,7 +720,7 @@
                             : '<span class="bg-neutral-300 px-2 py-0.5 text-xs font-bold text-neutral-800">CLOSED</span>';
                         
                         const pnlElem = row.querySelector('.pnl-col');
-                        pnlElem.className = `p-4 text-right font-bold pnl-col ${displayProfit >= 0 ? 'text-green-700' : 'text-red-700'}`;
+                        pnlElem.className = `p-3 sm:p-4 text-right font-bold pnl-col ${displayProfit >= 0 ? 'text-green-700' : 'text-red-700'}`;
                         pnlElem.innerText = `${displayProfit >= 0 ? '+' : ''}$${displayProfit.toFixed(2)}`;
                     }
                 });
@@ -729,7 +738,10 @@
             initLedger();
 
             window.addEventListener('resize', () => {
-                chart.applyOptions({ width: chartContainer.clientWidth });
+                chart.applyOptions({ 
+                    width: chartContainer.clientWidth,
+                    height: chartContainer.clientHeight 
+                });
             });
         })();
     </script>
