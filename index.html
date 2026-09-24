@@ -217,9 +217,50 @@
                     </div>
                 </div>
 
-                <div class="mt-4 pt-3 border-t border-neutral-800 flex flex-wrap justify-between items-center text-[10px] text-neutral-500 gap-1">
+                <!-- Core Graphical Sparkline Widget inside Card -->
+                <div class="mt-4 pt-3 border-t border-neutral-800 space-y-1.5">
+                    <div class="flex justify-between text-[10px] text-neutral-400 font-semibold">
+                        <span>LIVE EQUITY WAVEFORM (TICK STREAM)</span>
+                        <span class="text-accentyellow font-bold">SYNCHRONIZED</span>
+                    </div>
+                    <div class="w-full h-8 bg-neutral-900 brutal-border border-neutral-700 relative overflow-hidden">
+                        <canvas id="card-sparkline" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+
+                <div class="mt-3 pt-2 border-t border-neutral-800 flex flex-wrap justify-between items-center text-[10px] text-neutral-500 gap-1">
                     <span>FRAMEWORK: HIGH PROFIT / LOW LOSS</span>
                     <span class="text-accentyellow">OPTIMIZED RR SYNC</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Core Analytics Visual Grid -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-8">
+            <div class="bg-white brutal-border brutal-shadow p-6 font-mono grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2 border-b md:border-b-0 md:border-r border-pureblack pb-4 md:pb-0 md:pr-6">
+                    <div class="text-xs font-bold text-neutral-500 uppercase">Monthly Growth Progression</div>
+                    <div class="text-2xl font-black">+8.45%</div>
+                    <div class="w-full bg-cream h-2.5 brutal-border overflow-hidden p-0.5">
+                        <div class="bg-pureblack h-full w-[84.5%]"></div>
+                    </div>
+                    <p class="text-[11px] text-neutral-600">Calculated on compound equity return benchmark.</p>
+                </div>
+                <div class="space-y-2 border-b md:border-b-0 md:border-r border-pureblack pb-4 md:pb-0 md:pr-6">
+                    <div class="text-xs font-bold text-neutral-500 uppercase">Risk to Reward Factor</div>
+                    <div class="text-2xl font-black text-green-700">1 : 3.42</div>
+                    <div class="w-full bg-cream h-2.5 brutal-border overflow-hidden p-0.5">
+                        <div class="bg-green-600 h-full w-[75%]"></div>
+                    </div>
+                    <p class="text-[11px] text-neutral-600">Optimized stop-loss vs target profit matrix.</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="text-xs font-bold text-neutral-500 uppercase">Desk Utilization Load</div>
+                    <div class="text-2xl font-black">18.2%</div>
+                    <div class="w-full bg-cream h-2.5 brutal-border overflow-hidden p-0.5">
+                        <div class="bg-accentyellow h-full w-[18.2%]"></div>
+                    </div>
+                    <p class="text-[11px] text-neutral-600">Conservative margin exposure across active lots.</p>
                 </div>
             </div>
         </section>
@@ -453,7 +494,7 @@
             }, 1500);
         })();
 
-        // Terminal Functionality Code
+        // Terminal Functionality Code with Core Graphical Canvas Sparkline
         (function() {
             function updateFooterClock() {
                 const now = new Date();
@@ -464,7 +505,6 @@
             setInterval(updateFooterClock, 1000);
             updateFooterClock();
 
-            // Only initialize custom cursor on desktop devices (non-touch)
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
             if (window.innerWidth >= 1024 && !isTouchDevice) {
                 const cursorDot = document.getElementById('cursor-dot');
@@ -544,6 +584,35 @@
             const heroCapStat = document.getElementById('hero-capital-stat');
             if(heroCapStat) heroCapStat.innerText = shortBaseCap;
 
+            // Core Canvas Sparkline Live Visualizer
+            const sparkCanvas = document.getElementById('card-sparkline');
+            const sparkCtx = sparkCanvas ? sparkCanvas.getContext('2d') : null;
+            let sparkPoints = [20, 25, 22, 30, 28, 35, 32, 40, 38, 45, 42, 50, 48, 55, 52, 60];
+
+            function drawSparkline() {
+                if(!sparkCtx || !sparkCanvas) return;
+                sparkCanvas.width = sparkCanvas.parentElement.clientWidth;
+                sparkCanvas.height = sparkCanvas.parentElement.clientHeight;
+
+                sparkCtx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+                sparkCtx.strokeStyle = '#ffde00';
+                sparkCtx.lineWidth = 2;
+                sparkCtx.beginPath();
+
+                let step = sparkCanvas.width / (sparkPoints.length - 1);
+                let min = Math.min(...sparkPoints);
+                let max = Math.max(...sparkPoints);
+                let range = max - min || 1;
+
+                sparkPoints.forEach((val, i) => {
+                    let x = i * step;
+                    let y = sparkCanvas.height - ((val - min) / range) * (sparkCanvas.height - 8) - 4;
+                    if(i === 0) sparkCtx.moveTo(x, y);
+                    else sparkCtx.lineTo(x, y);
+                });
+                sparkCtx.stroke();
+            }
+
             const MarketStore = {
                 prices: {
                     'XAUUSD': 4277.00,
@@ -577,6 +646,11 @@
                     let jitter = sym === 'XAUUSD' ? (Math.random() - 0.49) * 0.35 : (sym === 'USDJPY' ? (Math.random() - 0.49) * 0.05 : (Math.random() - 0.49) * 0.0002);
                     MarketStore.prices[sym] += jitter;
                 });
+
+                // Update sparkline with live gold price action
+                sparkPoints.push(MarketStore.prices['XAUUSD'] % 100);
+                if(sparkPoints.length > 20) sparkPoints.shift();
+                drawSparkline();
 
                 MarketStore.notify();
             }
@@ -736,12 +810,14 @@
             });
 
             initLedger();
+            drawSparkline();
 
             window.addEventListener('resize', () => {
                 chart.applyOptions({ 
                     width: chartContainer.clientWidth,
                     height: chartContainer.clientHeight 
                 });
+                drawSparkline();
             });
         })();
     </script>
