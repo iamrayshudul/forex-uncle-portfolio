@@ -91,14 +91,40 @@
             transform: translate(2px, 2px);
             box-shadow: 0px 0px 0px #000000;
         }
-        @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-50%); }
+
+        /* Advanced Seamless Infinite Marquee with Glitch/Scan Reset Effect */
+        @keyframes smoothMarquee {
+            0% { transform: translateX(0); filter: brightness(100%); }
+            98% { transform: translateX(-50%); filter: brightness(100%); }
+            99% { transform: translateX(-50%); filter: brightness(150%) blur(1px); }
+            100% { transform: translateX(0); filter: brightness(100%); }
         }
-        .animate-marquee {
-            display: inline-block;
+        .marquee-container {
+            display: flex;
+            overflow: hidden;
+            width: 100%;
             white-space: nowrap;
-            animation: marquee 25s linear infinite;
+            position: relative;
+        }
+        .marquee-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px;
+            height: 100%;
+            background: linear-gradient(to left, rgba(255,222,0,1), rgba(255,222,0,0));
+            pointer-events: none;
+            z-index: 10;
+        }
+        .marquee-track {
+            display: flex;
+            gap: 3rem;
+            animation: smoothMarquee 25s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+            will-change: transform, filter;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
         }
 
         /* Custom Cursor for PC */
@@ -244,14 +270,25 @@
             </div>
         </section>
 
-        <!-- Market Ticker Section -->
-        <div id="ticker" class="border-y-2 border-pureblack bg-accentyellow py-3 sm:py-4 overflow-hidden whitespace-nowrap mt-8">
-            <div class="inline-block animate-marquee font-mono font-bold text-base sm:text-lg tracking-widest space-x-12">
-                <span>XAUUSD: <span id="price-xau" class="underline">---</span></span> &bull;
-                <span>EURUSD: <span id="price-eur" class="underline">---</span></span> &bull;
-                <span>GBPUSD: <span id="price-gbp" class="underline">---</span></span> &bull;
-                <span>USDJPY: <span id="price-jpy" class="underline">---</span></span> &bull;
-                <span>BTCUSD: <span id="price-btc" class="underline">---</span></span>
+        <!-- Seamless Infinite Market Ticker Section with Advanced Loop Transition -->
+        <div id="ticker" class="border-y-2 border-pureblack bg-accentyellow py-3 sm:py-4 mt-8 marquee-container">
+            <div class="marquee-track font-mono font-bold text-xs sm:text-sm md:text-base tracking-widest">
+                <!-- Group 1 -->
+                <div class="flex items-center gap-12">
+                    <span>XAUUSD: <span id="price-xau-1" class="underline">---</span></span> &bull;
+                    <span>EURUSD: <span id="price-eur-1" class="underline">---</span></span> &bull;
+                    <span>GBPUSD: <span id="price-gbp-1" class="underline">---</span></span> &bull;
+                    <span>USDJPY: <span id="price-jpy-1" class="underline">---</span></span> &bull;
+                    <span>BTCUSD: <span id="price-btc-1" class="underline">---</span></span>
+                </div>
+                <!-- Group 2 -->
+                <div class="flex items-center gap-12">
+                    <span>XAUUSD: <span id="price-xau-2" class="underline">---</span></span> &bull;
+                    <span>EURUSD: <span id="price-eur-2" class="underline">---</span></span> &bull;
+                    <span>GBPUSD: <span id="price-gbp-2" class="underline">---</span></span> &bull;
+                    <span>USDJPY: <span id="price-jpy-2" class="underline">---</span></span> &bull;
+                    <span>BTCUSD: <span id="price-btc-2" class="underline">---</span></span>
+                </div>
             </div>
         </div>
 
@@ -313,14 +350,32 @@
             </div>
         </section>
 
-        <!-- Profit / Loss Calculator Section -->
+        <!-- Profit / Loss Calculator Section with Real-Time Cross-Check & Ledger Audit -->
         <section id="calculator" class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
             <div class="bg-cream brutal-border brutal-shadow p-6 sm:p-10 font-mono">
-                <div class="mb-6">
-                    <span class="bg-pureblack text-accentyellow text-xs font-bold uppercase px-3 py-1 brutal-shadow-sm">Tool</span>
-                    <h3 class="text-2xl font-extrabold uppercase mt-3 tracking-tight">Trade P/L Calculator</h3>
-                    <p class="text-xs sm:text-sm text-neutral-700 mt-1">Calculate exact profit or loss using ticket details, lot size, open price, and current live price.</p>
+                <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <span class="bg-pureblack text-accentyellow text-xs font-bold uppercase px-3 py-1 brutal-shadow-sm">Audit Tool</span>
+                        <h3 class="text-2xl font-extrabold uppercase mt-3 tracking-tight">Trade P/L Cross-Check Calculator</h3>
+                        <p class="text-xs sm:text-sm text-neutral-700 mt-1">Cross-check live market prices and verify ledger calculations instantly.</p>
+                    </div>
+                    <!-- Quick Load Ledger Data Button -->
+                    <button type="button" id="loadRunningTradeBtn" class="bg-accentyellow text-pureblack font-bold text-xs uppercase px-3 py-2 brutal-border brutal-shadow-sm hover:bg-pureblack hover:text-accentyellow transition-colors">
+                        Load Running Trades ⚡
+                    </button>
                 </div>
+
+                <!-- Cross-Check Status Banner -->
+                <div id="crossCheckBanner" class="mb-6 p-3 sm:p-4 brutal-border bg-white text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                        <span class="font-bold uppercase">Cross-Check Status:</span> 
+                        <span id="auditStatusText" class="text-blue-700 font-bold">Ready for verification</span>
+                    </div>
+                    <div id="liveFeedReference" class="text-neutral-600">
+                        Live Feed Rate: <strong id="refMarketPrice" class="text-pureblack">---</strong>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                     <div>
                         <label for="calcTicket" class="block text-xs font-bold uppercase mb-1">Ticket ID</label>
@@ -349,13 +404,17 @@
                     </div>
                     <div>
                         <label for="calcOpen" class="block text-xs font-bold uppercase mb-1">Open Price</label>
-                        <input type="number" id="calcOpen" value="4255.00" step="0.0001" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
+                        <input type="number" id="calcOpen" value="4252.00" step="0.0001" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
                     </div>
                     <div>
-                        <label for="calcCurrent" class="block text-xs font-bold uppercase mb-1">Current Price</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label for="calcCurrent" class="text-xs font-bold uppercase">Current Price (Live)</label>
+                            <button type="button" id="syncWithLiveBtn" class="text-[10px] bg-pureblack text-accentyellow px-1.5 py-0.5 font-bold hover:underline">Sync Live</button>
+                        </div>
                         <input type="number" id="calcCurrent" value="4255.00" step="0.0001" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
                     </div>
                 </div>
+
                 <div class="flex flex-col sm:flex-row justify-between items-center bg-pureblack text-cream p-4 brutal-border gap-4">
                     <span class="text-xs uppercase tracking-wider text-accentyellow font-bold">Calculated Result for <span id="displayTicket" class="underline">#948255</span>:</span>
                     <span id="calcResult" class="text-xl sm:text-2xl font-bold text-green-400">+$0.00</span>
@@ -434,7 +493,7 @@
             alert("Protected Content: Right-click is disabled on this portfolio.");
         });
 
-        // Disable Common Inspect Keyboard Shortcuts (F12, Ctrl+U, Ctrl+Shift+I, Ctrl+Shift+J)
+        // Disable Common Inspect Keyboard Shortcuts
         document.addEventListener('keydown', function(e) {
             if (
                 e.key === 'F12' ||
@@ -478,7 +537,7 @@
         }
         animateCursor();
 
-        // Market Data Store initialized around current real market rates (~4255.00 Gold base)
+        // Market Data Store
         let marketData = {
             'XAUUSD': 4255.00,
             'EURUSD': 1.1150,
@@ -486,8 +545,6 @@
             'USDJPY': 143.50,
             'BTCUSD': 63200.00
         };
-
-        let baseTicket = 948250;
 
         let trades = [
             { id: '#948255', symbol: 'XAUUSD', type: 'BUY', lots: 0.50, open: 4252.00, status: 'RUNNING', profit: 0 },
@@ -499,18 +556,19 @@
             { id: '#948249', symbol: 'XAUUSD', type: 'BUY', lots: 0.60, open: 4240.00, close: 4250.00, status: 'CLOSED', profit: 600.00 }
         ];
 
+        // Unified precise calculation formula matching ledger & calculator
         function calculateProfit(symbol, type, lots, open, current) {
             let diff = (type === 'BUY') ? (current - open) : (open - current);
             let multiplier = 1;
 
             if (symbol === 'XAUUSD') {
-                multiplier = 100;
+                multiplier = 100; // 1 lot = 100 oz
             } else if (symbol === 'EURUSD' || symbol === 'GBPUSD') {
-                multiplier = 100000;
+                multiplier = 100000; // Standard lot contract size
             } else if (symbol === 'USDJPY') {
-                multiplier = 1000;
+                return (diff / current) * lots * 100000;
             } else if (symbol === 'BTCUSD') {
-                multiplier = 1;
+                multiplier = 1; // 1 whole coin unit base
             } else {
                 multiplier = 100;
             }
@@ -533,8 +591,24 @@
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-accentyellow/20 transition-colors';
+                tr.className = 'hover:bg-accentyellow/20 transition-colors cursor-pointer';
+                tr.title = "Click to load this trade into calculator for cross-checking";
                 
+                // Clicking ledger row loads exact trade values into calculator
+                tr.addEventListener('click', () => {
+                    document.getElementById('calcTicket').value = t.id;
+                    document.getElementById('calcAsset').value = t.symbol;
+                    document.getElementById('calcType').value = t.type;
+                    document.getElementById('calcLots').value = t.lots.toFixed(2);
+                    
+                    let decimalPlaces = (t.symbol === 'EURUSD' || t.symbol === 'GBPUSD') ? 4 : 2;
+                    document.getElementById('calcOpen').value = t.open.toFixed(decimalPlaces);
+                    document.getElementById('calcCurrent').value = currentOrClosePrice.toFixed(decimalPlaces);
+                    
+                    updateCalculator();
+                    window.location.href = '#calculator';
+                });
+
                 let statusBadge = t.status === 'RUNNING' 
                     ? '<span class="px-2 py-0.5 text-[10px] sm:text-xs font-bold brutal-border bg-green-500 text-pureblack animate-pulse">RUNNING</span>'
                     : '<span class="px-2 py-0.5 text-[10px] sm:text-xs font-bold brutal-border bg-neutral-900 text-cream">CLOSED</span>';
@@ -581,11 +655,19 @@
                 marketData['XAUUSD'] += parseFloat((Math.random() * 0.8 - 0.4).toFixed(2));
             }
 
-            document.getElementById('price-xau').innerText = marketData['XAUUSD'].toFixed(2);
-            document.getElementById('price-eur').innerText = marketData['EURUSD'].toFixed(4);
-            document.getElementById('price-gbp').innerText = marketData['GBPUSD'].toFixed(4);
-            document.getElementById('price-jpy').innerText = marketData['USDJPY'].toFixed(2);
-            document.getElementById('price-btc').innerText = marketData['BTCUSD'].toFixed(2);
+            const xauVal = marketData['XAUUSD'].toFixed(2);
+            const eurVal = marketData['EURUSD'].toFixed(4);
+            const gbpVal = marketData['GBPUSD'].toFixed(4);
+            const jpyVal = marketData['USDJPY'].toFixed(2);
+            const btcVal = marketData['BTCUSD'].toFixed(2);
+
+            ['1', '2'].forEach(suffix => {
+                document.getElementById(`price-xau-${suffix}`).innerText = xauVal;
+                document.getElementById(`price-eur-${suffix}`).innerText = eurVal;
+                document.getElementById(`price-gbp-${suffix}`).innerText = gbpVal;
+                document.getElementById(`price-jpy-${suffix}`).innerText = jpyVal;
+                document.getElementById(`price-btc-${suffix}`).innerText = btcVal;
+            });
 
             renderLedger();
             updateCalculator();
@@ -597,14 +679,40 @@
             const type = document.getElementById('calcType').value;
             const lots = parseFloat(document.getElementById('calcLots').value) || 0;
             const open = parseFloat(document.getElementById('calcOpen').value) || 0;
-            
             const currentField = document.getElementById('calcCurrent');
-            if(marketData[asset] && document.activeElement !== currentField) {
-                currentField.value = marketData[asset].toFixed(asset === 'EURUSD' || asset === 'GBPUSD' ? 4 : 2);
-            }
-
             const current = parseFloat(currentField.value) || 0;
+
             document.getElementById('displayTicket').innerText = ticket;
+            const liveRef = marketData[asset] || 0;
+            let decimalPlaces = (asset === 'EURUSD' || asset === 'GBPUSD') ? 4 : 2;
+            document.getElementById('refMarketPrice').innerText = liveRef.toFixed(decimalPlaces);
+
+            // Cross-check validation logic against live feed & ledger
+            const statusText = document.getElementById('auditStatusText');
+            const crossBanner = document.getElementById('crossCheckBanner');
+            
+            let matchedTrade = trades.find(t => t.id === ticket);
+            let isLiveSynced = Math.abs(current - liveRef) < 0.05;
+
+            if (matchedTrade && Math.abs(matchedTrade.open - open) < 0.0001) {
+                if (matchedTrade.status === 'RUNNING' && isLiveSynced) {
+                    statusText.innerText = `✅ VERIFIED: Matches Ledger & Live Market Feed (${asset})`;
+                    statusText.className = "text-green-700 font-bold";
+                    crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-green-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
+                } else if (matchedTrade.status === 'CLOSED' && Math.abs(matchedTrade.close - current) < 0.0001) {
+                    statusText.innerText = `✅ VERIFIED: Matches Closed Trade History (${ticket})`;
+                    statusText.className = "text-green-700 font-bold";
+                    crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-green-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
+                } else {
+                    statusText.innerText = `⚠️ CUSTOM INPUT: Active trade found, but price differs from current live tick.`;
+                    statusText.className = "text-amber-700 font-bold";
+                    crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-amber-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
+                }
+            } else {
+                statusText.innerText = `🔍 CUSTOM SIMULATION: Custom parameters entered by visitor.`;
+                statusText.className = "text-blue-700 font-bold";
+                crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-white text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
+            }
 
             let pnl = calculateProfit(asset, type, lots, open, current);
             const resElem = document.getElementById('calcResult');
@@ -612,11 +720,38 @@
             resElem.className = pnl >= 0 ? 'text-xl sm:text-2xl font-bold text-green-400' : 'text-xl sm:text-2xl font-bold text-red-400';
         }
 
+        // Quick button to load first running trade into calculator with exact open price
+        document.getElementById('loadRunningTradeBtn').addEventListener('click', () => {
+            const runningTrade = trades.find(t => t.status === 'RUNNING');
+            if (runningTrade) {
+                document.getElementById('calcTicket').value = runningTrade.id;
+                document.getElementById('calcAsset').value = runningTrade.symbol;
+                document.getElementById('calcType').value = runningTrade.type;
+                document.getElementById('calcLots').value = runningTrade.lots.toFixed(2);
+                
+                let decimalPlaces = (runningTrade.symbol === 'EURUSD' || runningTrade.symbol === 'GBPUSD') ? 4 : 2;
+                document.getElementById('calcOpen').value = runningTrade.open.toFixed(decimalPlaces);
+                document.getElementById('calcCurrent').value = marketData[runningTrade.symbol].toFixed(decimalPlaces);
+                updateCalculator();
+            }
+        });
+
+        // Sync current price with live feed button
+        document.getElementById('syncWithLiveBtn').addEventListener('click', () => {
+            const asset = document.getElementById('calcAsset').value;
+            if (marketData[asset]) {
+                let decimalPlaces = (asset === 'EURUSD' || asset === 'GBPUSD') ? 4 : 2;
+                document.getElementById('calcCurrent').value = marketData[asset].toFixed(decimalPlaces);
+                updateCalculator();
+            }
+        });
+
         document.getElementById('calcAsset').addEventListener('change', function() {
             const selectedAsset = this.value;
             if(marketData[selectedAsset]) {
-                document.getElementById('calcOpen').value = marketData[selectedAsset].toFixed(selectedAsset === 'EURUSD' || selectedAsset === 'GBPUSD' ? 4 : 2);
-                document.getElementById('calcCurrent').value = marketData[selectedAsset].toFixed(selectedAsset === 'EURUSD' || selectedAsset === 'GBPUSD' ? 4 : 2);
+                let decimalPlaces = (selectedAsset === 'EURUSD' || selectedAsset === 'GBPUSD') ? 4 : 2;
+                document.getElementById('calcOpen').value = marketData[selectedAsset].toFixed(decimalPlaces);
+                document.getElementById('calcCurrent').value = marketData[selectedAsset].toFixed(decimalPlaces);
             }
             updateCalculator();
         });
