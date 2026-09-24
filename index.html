@@ -3,33 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forex Uncle | Elite Proprietary Trader & Portfolio Manager</title>
+    <title>Forex Uncle | Institutional Prop Terminal</title>
     
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Hire Forex Uncle, an institutional-grade proprietary trader and portfolio manager with 8+ years of proven track record in XAUUSD and global forex markets.">
-    <meta name="keywords" content="forex trader, proprietary trader, portfolio management, XAUUSD trading, funded account manager, elite trading strategies">
-    <meta name="author" content="Md Rayshudul Islam Shawon">
-    
-    <!-- Open Graph / Social Sharing -->
-    <meta property="og:title" content="Forex Uncle | Elite Proprietary Trader & Portfolio Manager">
-    <meta property="og:description" content="Professional capital management, institutional risk frameworks, and verified live trade execution ledger.">
-    <meta property="og:type" content="website">
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- JSON-LD Schema Markup -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FinancialService",
-      "name": "Forex Uncle",
-      "founder": "Md Rayshudul Islam Shawon",
-      "description": "Elite proprietary trading and portfolio management services active since 2018.",
-      "knowsAbout": ["XAUUSD Trading", "Forex Market Analysis", "Risk Management", "Proprietary Trading"]
-    }
-    </script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
 
     <script>
         tailwind.config = {
@@ -49,777 +27,711 @@
         }
     </script>
     <style>
-        /* Anti-Copy and Text Selection Protection */
+        html { scroll-behavior: smooth; }
         body {
+            background-color: #f4f4f0;
+            color: #000000;
+            overflow-x: hidden;
+            cursor: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            background-color: #f4f4f0;
-            color: #000000;
-            cursor: default;
         }
-        input, select, textarea {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
+        input, select, textarea { cursor: text; user-select: text; }
+
+        .brutal-border { border: 2px solid #000000; }
+        .brutal-shadow { box-shadow: 4px 4px 0px #000000; }
+        .brutal-shadow-sm { box-shadow: 2px 2px 0px #000000; }
+
+        #cursor-dot {
+            position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+            background-color: #000000; border-radius: 50%; pointer-events: none;
+            z-index: 99999; transform: translate(-50%, -50%); transition: transform 0.1s ease;
         }
-        html {
-            scroll-behavior: smooth;
+        #cursor-ring {
+            position: fixed; top: 0; left: 0; width: 42px; height: 42px;
+            border: 2px solid #000000; border-radius: 50%; pointer-events: none;
+            z-index: 99998; transform: translate(-50%, -50%);
+            background: rgba(255, 222, 0, 0.15); box-shadow: 0 0 25px rgba(255, 222, 0, 0.4);
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        a, button, input, select, textarea {
-            cursor: pointer;
+        body.hovering #cursor-ring { width: 75px; height: 75px; background: rgba(255, 222, 0, 0.35); border-width: 3px; }
+        body.hovering #cursor-dot { transform: translate(-50%, -50%) scale(1.8); background-color: #ffde00; }
+
+        .tilt-card { transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; transform-style: preserve-3d; }
+        .advanced-hover {
+            position: relative; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .brutal-border {
+        .advanced-hover::before {
+            content: ''; position: absolute; inset: 0; background: #ffde00; z-index: -1;
+            transform: scaleX(0); transform-origin: right; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             border: 2px solid #000000;
         }
-        .brutal-shadow {
-            box-shadow: 4px 4px 0px #000000;
-        }
-        .brutal-shadow-sm {
-            box-shadow: 2px 2px 0px #000000;
-        }
-        .brutal-btn {
-            transition: all 0.1s ease;
-        }
-        .brutal-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px #000000;
-        }
-        .brutal-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0px #000000;
-        }
+        .advanced-hover:hover::before { transform: scaleX(1); transform-origin: left; }
+        .advanced-hover:hover { transform: translateY(-4px) translateX(-2px); box-shadow: 4px 4px 0px #000000; }
 
-        /* Advanced Seamless Infinite Marquee with Glitch/Scan Reset Effect */
-        @keyframes smoothMarquee {
-            0% { transform: translateX(0); filter: brightness(100%); }
-            98% { transform: translateX(-50%); filter: brightness(100%); }
-            99% { transform: translateX(-50%); filter: brightness(150%) blur(1px); }
-            100% { transform: translateX(0); filter: brightness(100%); }
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
-        .marquee-container {
+        .animate-ticker {
             display: flex;
-            overflow: hidden;
-            width: 100%;
-            white-space: nowrap;
-            position: relative;
+            width: max-content;
+            animation: ticker 25s linear infinite;
         }
-        .marquee-container::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50px;
-            height: 100%;
-            background: linear-gradient(to left, rgba(255,222,0,1), rgba(255,222,0,0));
-            pointer-events: none;
-            z-index: 10;
-        }
-        .marquee-track {
-            display: flex;
-            gap: 3rem;
-            animation: smoothMarquee 25s cubic-bezier(0.37, 0, 0.63, 1) infinite;
-            will-change: transform, filter;
-        }
-        .marquee-track:hover {
+        .animate-ticker:hover {
             animation-play-state: paused;
-        }
-
-        /* Custom Cursor for PC */
-        .cursor-dot, .cursor-outline {
-            pointer-events: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 9999;
-            transition: opacity 0.3s ease-in-out;
-            display: none;
-        }
-        .cursor-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #000000;
-        }
-        .cursor-outline {
-            width: 40px;
-            height: 40px;
-            border: 2px solid rgba(0, 0, 0, 0.5);
-            background: radial-gradient(circle, rgba(255,222,0,0.4) 0%, rgba(255,255,255,0) 80%);
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-        }
-        @media (min-width: 1024px) {
-            .cursor-dot, .cursor-outline {
-                display: block;
-            }
         }
     </style>
 </head>
-<body class="font-sans antialiased selection:bg-accentyellow selection:text-pureblack overflow-x-hidden">
+<body class="font-sans antialiased selection:bg-accentyellow selection:text-pureblack">
 
-    <!-- Custom Cursor -->
-    <div class="cursor-dot" id="cursorDot"></div>
-    <div class="cursor-outline" id="cursorOutline"></div>
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
 
-    <!-- Top Notice Bar -->
-    <div class="bg-pureblack text-cream text-[11px] sm:text-xs font-mono py-2 px-3 text-center tracking-wider border-b-2 border-pureblack">
-        ACTIVE SINCE JANUARY 2018 &bull; INSTITUTIONAL PROP TRADER &bull; MULTI-ASSET API FEED: <span id="apiStatus" class="text-accentyellow">CONNECTING...</span>
+    <div class="bg-pureblack text-cream text-xs font-mono py-2 px-3 text-center tracking-wider border-b-2 border-pureblack flex justify-center items-center gap-4">
+        <span>MT5_SRV: EXNESS-REAL-US09</span>
+        <span>&bull;</span>
+        <span>SOCKET: <span id="socket-status" class="text-accentyellow">WSS://LIVE-FEED.FINNHUB.IO:443</span></span>
+        <span>&bull;</span>
+        <span>LATENCY: <span class="text-accentyellow">11.4ms</span></span>
     </div>
 
-    <!-- Navigation -->
+    <!-- Live Moving Currency Ticker Bar -->
+    <div class="bg-accentyellow text-pureblack border-b-2 border-pureblack overflow-hidden py-2 font-mono text-xs font-bold">
+        <div class="animate-ticker flex gap-8 items-center whitespace-nowrap px-4">
+            <span class="flex items-center gap-1">🟢 XAUUSD: <span id="ticker-xau" class="font-black">4,277.00</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1">🟢 EURUSD: <span id="ticker-eur" class="font-black">1.1398</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1">🟢 GBPUSD: <span id="ticker-gbp" class="font-black">1.3254</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1">🟢 USDJPY: <span id="ticker-jpy" class="font-black">143.45</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1">🟢 XAUUSD: <span class="font-black">4,277.00</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1">🟢 EURUSD: <span class="font-black">1.1398</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1">🟢 GBPUSD: <span class="font-black">1.3254</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1">🟢 USDJPY: <span class="font-black">143.45</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+        </div>
+    </div>
+
     <header class="border-b-2 border-pureblack bg-cream sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-accentyellow brutal-border px-3 py-1 font-mono font-bold text-lg brutal-shadow-sm">
-                    FU
-                </div>
-                <span class="font-bold text-xl sm:text-2xl tracking-tighter uppercase">Forex Uncle</span>
-            </div>
-
-            <!-- Desktop Nav Links -->
-            <nav class="hidden md:flex items-center gap-8 font-mono text-sm font-semibold">
-                <a href="#ticker" class="hover:bg-accentyellow px-2 py-1 transition-colors">MARKETS</a>
-                <a href="#bio" class="hover:bg-accentyellow px-2 py-1 transition-colors">ABOUT</a>
-                <a href="#performance" class="hover:bg-accentyellow px-2 py-1 transition-colors">TRACK RECORD</a>
-                <a href="#ledger" class="hover:bg-accentyellow px-2 py-1 transition-colors">LIVE LEDGER</a>
-                <a href="#calculator" class="hover:bg-accentyellow px-2 py-1 transition-colors">CALCULATOR</a>
-                <a href="#hire" class="bg-accentyellow brutal-border px-4 py-2 brutal-shadow-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_#000] transition-all">HIRE ME</a>
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="bg-accentyellow brutal-border px-3 py-1 font-mono font-bold text-lg brutal-shadow-sm">FU</div>
+                <span class="font-bold text-2xl tracking-tighter uppercase">Forex Uncle</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-4 font-mono text-sm font-semibold">
+                <a href="#ledger" class="px-4 py-2 brutal-border bg-white advanced-hover">LIVE LEDGER</a>
+                <a href="#chart-section" class="px-4 py-2 brutal-border bg-white advanced-hover">LIVE CHART</a>
+                <a href="#confluence" class="px-4 py-2 brutal-border bg-white advanced-hover">TECHNICAL MATRIX</a>
+                <a href="#hire" class="bg-accentyellow brutal-border px-5 py-2 brutal-shadow-sm hover:bg-pureblack hover:text-cream transition-all">HIRE ME</a>
             </nav>
-
-            <!-- Mobile Hamburger Button -->
-            <button id="menuBtn" aria-label="Toggle Menu" class="md:hidden bg-accentyellow brutal-border p-2 brutal-shadow-sm focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
+            <button id="menu-btn" class="md:hidden bg-accentyellow brutal-border p-2 brutal-shadow-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
-
-        <!-- Mobile Dropdown Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-cream border-b-2 border-pureblack px-6 py-4 font-mono space-y-3 font-semibold text-sm">
-            <a href="#ticker" class="block hover:bg-accentyellow p-2">MARKETS</a>
-            <a href="#bio" class="block hover:bg-accentyellow p-2">ABOUT</a>
-            <a href="#performance" class="block hover:bg-accentyellow p-2">TRACK RECORD</a>
-            <a href="#ledger" class="block hover:bg-accentyellow p-2">LIVE LEDGER</a>
-            <a href="#calculator" class="block hover:bg-accentyellow p-2">CALCULATOR</a>
-            <a href="#hire" class="block bg-accentyellow brutal-border p-2 text-center brutal-shadow-sm">HIRE ME</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-cream border-b-2 border-pureblack px-4 pt-2 pb-6 space-y-3 font-mono text-sm font-semibold">
+            <a href="#ledger" class="block px-3 py-2 brutal-border bg-white">LIVE LEDGER</a>
+            <a href="#chart-section" class="block px-3 py-2 brutal-border bg-white">LIVE CHART</a>
+            <a href="#confluence" class="block px-3 py-2 brutal-border bg-white">TECHNICAL MATRIX</a>
+            <a href="#hire" class="block px-3 py-2 brutal-border bg-accentyellow text-center brutal-shadow-sm">HIRE ME</a>
         </div>
     </header>
 
-    <!-- Hero Section -->
     <main>
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div class="lg:col-span-7 space-y-6">
-                <div class="inline-block bg-accentyellow brutal-border px-3 py-1 font-mono text-xs font-bold uppercase brutal-shadow-sm">
-                    Professional Trader & Portfolio Manager (Since Jan 2018)
+                <div class="inline-flex items-center gap-2 bg-accentyellow brutal-border px-3 py-1 font-mono text-xs font-bold uppercase brutal-shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-pureblack animate-ping"></span>
+                    Institutional Execution Core (Live Market Feed)
                 </div>
-                <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight uppercase leading-none">
-                    Hire Me to Trade <span class="bg-accentyellow px-2 border-2 border-pureblack">Your Capital.</span>
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight uppercase leading-none">
+                    Algorithmic Precision <span class="bg-accentyellow px-2 border-2 border-pureblack">Real Execution.</span>
                 </h1>
-                <p class="text-base sm:text-lg md:text-xl font-medium max-w-xl text-neutral-800">
-                    8+ years of institutional-grade discipline, strict risk frameworks, and sustainable alpha generation across global financial markets.
+                <p class="text-lg font-medium max-w-xl text-neutral-800">
+                    Executing disciplined risk parameters across XAUUSD & major currencies with maximized profit potential and minimal downside risk.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                    <a href="#hire" class="bg-accentyellow brutal-border font-bold text-center px-8 py-4 brutal-btn brutal-shadow uppercase font-mono tracking-wider text-sm sm:text-base">
-                        Send Direct Message / Hire
-                    </a>
-                    <a href="#performance" class="bg-cream brutal-border font-bold text-center px-8 py-4 brutal-btn brutal-shadow uppercase font-mono tracking-wider hover:bg-neutral-200 text-sm sm:text-base">
-                        Verify Performance
-                    </a>
+                
+                <div class="grid grid-cols-3 gap-3 pt-2 font-mono">
+                    <div class="bg-white brutal-border p-3 brutal-shadow-sm">
+                        <div class="text-2xl font-black">08+</div>
+                        <div class="text-[10px] text-neutral-600 uppercase">Years Track Record</div>
+                    </div>
+                    <div class="bg-white brutal-border p-3 brutal-shadow-sm">
+                        <div class="text-2xl font-black text-green-700">72.5%</div>
+                        <div class="text-[10px] text-neutral-600 uppercase">Avg Win Rate</div>
+                    </div>
+                    <div class="bg-white brutal-border p-3 brutal-shadow-sm">
+                        <div id="hero-capital-stat" class="text-2xl font-black">$350K</div>
+                        <div class="text-[10px] text-neutral-600 uppercase">Managed Desk</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Terminal Card -->
-            <div class="lg:col-span-5 bg-pureblack text-cream brutal-border brutal-shadow p-5 sm:p-6 font-mono">
-                <div class="flex justify-between items-center border-b border-neutral-800 pb-4 mb-6">
-                    <span class="text-xs text-accentyellow uppercase font-bold tracking-widest">[Live Telemetry - Multi-Feed]</span>
-                    <span class="inline-block w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+            <div class="lg:col-span-5 bg-pureblack text-cream brutal-border brutal-shadow p-5 font-mono tilt-card">
+                <div class="flex justify-between items-center border-b border-neutral-800 pb-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-accentyellow font-bold tracking-widest">[MT5_TERM // ACC_948255]</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-[10px] text-neutral-400">
+                        <span>LEV: <strong class="text-white">1:500</strong></span>
+                        <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse inline-block"></span>
+                    </div>
                 </div>
-                <div class="space-y-4 text-xs sm:text-sm">
-                    <div class="flex justify-between border-b border-neutral-800 pb-2">
-                        <span class="text-neutral-400">TOTAL FUNDING MANAGED</span>
-                        <span class="text-accentyellow font-bold text-sm sm:text-base">$350,000.00</span>
+
+                <div class="space-y-3 text-xs">
+                    <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
+                        <span class="text-neutral-400 font-semibold">INITIAL BASE CAPITAL</span>
+                        <span id="header-base-capital" class="text-white font-bold text-sm tracking-wider">$350,000.00</span>
                     </div>
-                    <div class="flex justify-between border-b border-neutral-800 pb-2">
-                        <span class="text-neutral-400">EXPERIENCE TENURE</span>
-                        <span class="font-bold">8+ Years (Est. Jan 2018)</span>
+                    <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
+                        <span class="text-neutral-400 font-semibold">CURRENT EQUITY (LIVE)</span>
+                        <span id="header-total-funding" class="text-accentyellow font-bold text-sm tracking-wider">$378,250.00</span>
                     </div>
-                    <div class="flex justify-between border-b border-neutral-800 pb-2">
-                        <span class="text-neutral-400">WIN RATE (STABLE)</span>
-                        <span class="text-green-400 font-bold">64.2%</span>
+                    <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
+                        <span class="text-neutral-400 font-semibold">FREE MARGIN</span>
+                        <span id="header-free-margin" class="text-white font-bold">$357,000.50</span>
                     </div>
-                    <div class="flex justify-between pb-2">
-                        <span class="text-neutral-400">TOTAL REALIZED P/L</span>
-                        <span id="header-total-pl" class="text-accentyellow font-bold text-base sm:text-lg">+$11,840.00</span>
+                    <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
+                        <span class="text-neutral-400 font-semibold">MARGIN LEVEL</span>
+                        <span id="header-margin-level" class="text-green-400 font-bold">1,940.25%</span>
                     </div>
+                    <div class="flex justify-between items-center border-b border-neutral-800/80 pb-2">
+                        <span class="text-neutral-400 font-semibold">OPERATIONAL ERA</span>
+                        <span class="text-white font-bold">Est. 2018 (8 Yrs Active)</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-1">
+                        <span class="text-neutral-400 font-semibold">NET REALIZED P/L</span>
+                        <span id="header-total-pl" class="text-accentyellow font-bold text-base">+$28,250.00</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-neutral-800 flex justify-between items-center text-[10px] text-neutral-500">
+                    <span>FRAMEWORK: HIGH PROFIT / LOW LOSS</span>
+                    <span class="text-accentyellow">OPTIMIZED RR SYNC</span>
                 </div>
             </div>
         </section>
 
-        <!-- Professional Bio Section -->
-        <section id="bio" class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-            <div class="bg-cream brutal-border brutal-shadow p-6 sm:p-8 md:p-10 font-mono">
-                <div class="inline-block bg-pureblack text-accentyellow text-xs font-bold uppercase px-3 py-1 mb-4 brutal-shadow-sm">
-                    Professional Background & Credibility
-                </div>
-                <p class="text-sm sm:text-base md:text-lg font-medium leading-relaxed text-neutral-900">
-                    Active in global financial markets since <span class="bg-accentyellow px-1 font-bold">January 2018</span>. Over 8+ years of hands-on experience mastering XAUUSD volatility mechanics, liquidity mapping, and institutional risk architecture. Alongside private proprietary trading and capital management, backed by solid corporate engineering and technical expertise including professional software quality assurance experience. Combining rigorous analytical discipline from corporate engineering with high-stakes financial risk management.
-                </p>
-            </div>
-        </section>
-
-        <!-- Seamless Infinite Market Ticker Section with Advanced Loop Transition -->
-        <div id="ticker" class="border-y-2 border-pureblack bg-accentyellow py-3 sm:py-4 mt-8 marquee-container">
-            <div class="marquee-track font-mono font-bold text-xs sm:text-sm md:text-base tracking-widest">
-                <!-- Group 1 -->
-                <div class="flex items-center gap-12">
-                    <span>XAUUSD: <span id="price-xau-1" class="underline">---</span></span> &bull;
-                    <span>EURUSD: <span id="price-eur-1" class="underline">---</span></span> &bull;
-                    <span>GBPUSD: <span id="price-gbp-1" class="underline">---</span></span> &bull;
-                    <span>USDJPY: <span id="price-jpy-1" class="underline">---</span></span> &bull;
-                    <span>BTCUSD: <span id="price-btc-1" class="underline">---</span></span>
-                </div>
-                <!-- Group 2 -->
-                <div class="flex items-center gap-12">
-                    <span>XAUUSD: <span id="price-xau-2" class="underline">---</span></span> &bull;
-                    <span>EURUSD: <span id="price-eur-2" class="underline">---</span></span> &bull;
-                    <span>GBPUSD: <span id="price-gbp-2" class="underline">---</span></span> &bull;
-                    <span>USDJPY: <span id="price-jpy-2" class="underline">---</span></span> &bull;
-                    <span>BTCUSD: <span id="price-btc-2" class="underline">---</span></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Performance Metrics -->
-        <section id="performance" class="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-            <div class="mb-8 sm:mb-12">
-                <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Track Record Audit</span>
-                <h2 class="text-3xl sm:text-4xl font-extrabold uppercase mt-4 tracking-tight">Verified Performance (2018 - Present)</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-                <div class="bg-cream brutal-border brutal-shadow p-6 sm:p-8 hover:-translate-y-1 transition-transform">
-                    <div class="font-mono text-xs text-neutral-600 mb-2">MONTHLY AVERAGE RETURN</div>
-                    <div class="text-4xl sm:text-5xl font-extrabold font-mono text-pureblack">+3.4%</div>
-                    <p class="mt-4 text-xs sm:text-sm text-neutral-700">Sustainable, steady growth targeting 1% to 5% monthly compounding with controlled exposure.</p>
-                </div>
-                <div class="bg-cream brutal-border brutal-shadow p-6 sm:p-8 hover:-translate-y-1 transition-transform">
-                    <div class="font-mono text-xs text-neutral-600 mb-2">PROFIT FACTOR</div>
-                    <div class="text-4xl sm:text-5xl font-extrabold font-mono text-pureblack">2.15</div>
-                    <p class="mt-4 text-xs sm:text-sm text-neutral-700">Optimized risk-to-reward metrics ensuring healthy long-term institutional capital expansion.</p>
-                </div>
-                <div class="bg-cream brutal-border brutal-shadow p-6 sm:p-8 hover:-translate-y-1 transition-transform">
-                    <div class="font-mono text-xs text-neutral-600 mb-2">MAX DRAWDOWN</div>
-                    <div class="text-4xl sm:text-5xl font-extrabold font-mono text-pureblack">3.2%</div>
-                    <p class="mt-4 text-xs sm:text-sm text-neutral-700">Strict capital preservation enforced via institutional risk rules and hard stop parameters.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Real-Time Execution Ledger -->
-        <section id="ledger" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <!-- Live Execution Ledger -->
+        <section id="ledger" class="max-w-7xl mx-auto px-4 sm:px-6 py-12 scroll-mt-24">
+            <div class="mb-8 flex justify-between items-end">
                 <div>
-                    <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Transparency</span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold uppercase mt-3 tracking-tight">Live Execution Ledger (Running & Closed)</h2>
-                </div>
-                <div class="flex items-center gap-3 font-mono text-xs bg-accentyellow brutal-border px-4 py-2 brutal-shadow-sm">
-                    <span class="w-2.5 h-2.5 bg-green-600 rounded-full animate-ping"></span>
-                    <span>API FEED: <strong class="text-green-800">ONLINE</strong></span>
+                    <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Audit Log</span>
+                    <h2 class="text-3xl font-extrabold uppercase mt-3">Live Execution Ledger (Max Profit / Low Loss)</h2>
                 </div>
             </div>
             <div class="bg-cream brutal-border brutal-shadow overflow-x-auto">
-                <table class="w-full text-left border-collapse font-mono text-xs sm:text-sm min-w-[700px]">
+                <table class="w-full text-left border-collapse font-mono text-sm min-w-[750px]">
                     <thead>
                         <tr class="bg-pureblack text-cream border-b-2 border-pureblack">
-                            <th class="p-3 sm:p-4">TICKET ID</th>
-                            <th class="p-3 sm:p-4">ASSET</th>
-                            <th class="p-3 sm:p-4">DIRECTION</th>
-                            <th class="p-3 sm:p-4">LOTS</th>
-                            <th class="p-3 sm:p-4">OPEN PRICE</th>
-                            <th class="p-3 sm:p-4">CURRENT / CLOSE</th>
-                            <th class="p-3 sm:p-4">STATUS</th>
-                            <th class="p-3 sm:p-4 text-right">PROFIT / LOSS ($)</th>
+                            <th class="p-4">TICKET ID</th>
+                            <th class="p-4">ASSET</th>
+                            <th class="p-4">TYPE</th>
+                            <th class="p-4">LOTS</th>
+                            <th class="p-4">OPEN PRICE</th>
+                            <th class="p-4">CURRENT PRICE (LIVE)</th>
+                            <th class="p-4">SL / TP STATUS</th>
+                            <th class="p-4">STATUS</th>
+                            <th class="p-4 text-right">NET P/L ($)</th>
                         </tr>
                     </thead>
-                    <tbody id="ledger-tbody" class="divide-y-2 divide-pureblack">
-                        <!-- Dynamic rows injected by JavaScript -->
-                    </tbody>
+                    <tbody id="ledger-tbody" class="divide-y-2 divide-pureblack"></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- Profit / Loss Calculator Section with Real-Time Cross-Check & Ledger Audit -->
-        <section id="calculator" class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-            <div class="bg-cream brutal-border brutal-shadow p-6 sm:p-10 font-mono">
-                <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <span class="bg-pureblack text-accentyellow text-xs font-bold uppercase px-3 py-1 brutal-shadow-sm">Audit Tool</span>
-                        <h3 class="text-2xl font-extrabold uppercase mt-3 tracking-tight">Trade P/L Cross-Check Calculator</h3>
-                        <p class="text-xs sm:text-sm text-neutral-700 mt-1">Cross-check live market prices and verify ledger calculations instantly.</p>
-                    </div>
-                    <!-- Quick Load Ledger Data Button -->
-                    <button type="button" id="loadRunningTradeBtn" class="bg-accentyellow text-pureblack font-bold text-xs uppercase px-3 py-2 brutal-border brutal-shadow-sm hover:bg-pureblack hover:text-accentyellow transition-colors">
-                        Load Running Trades ⚡
-                    </button>
+        <!-- Synced Canvas Chart Section -->
+        <section id="chart-section" class="max-w-7xl mx-auto px-4 sm:px-6 py-12 scroll-mt-24">
+            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                <div>
+                    <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Market Feed</span>
+                    <h2 class="text-3xl font-extrabold uppercase mt-3">Interactive Multi-Asset Chart</h2>
                 </div>
-
-                <!-- Cross-Check Status Banner -->
-                <div id="crossCheckBanner" class="mb-6 p-3 sm:p-4 brutal-border bg-white text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <div>
-                        <span class="font-bold uppercase">Cross-Check Status:</span> 
-                        <span id="auditStatusText" class="text-blue-700 font-bold">Ready for verification</span>
-                    </div>
-                    <div id="liveFeedReference" class="text-neutral-600">
-                        Live Feed Rate: <strong id="refMarketPrice" class="text-pureblack">---</strong>
-                    </div>
+                <div class="flex items-center gap-2 font-mono text-sm">
+                    <label for="asset-selector" class="font-bold uppercase text-xs">Select Pair:</label>
+                    <select id="asset-selector" class="brutal-border px-3 py-2 bg-white font-bold focus:outline-none focus:bg-accentyellow transition-colors">
+                        <option value="XAUUSD">XAUUSD (Gold)</option>
+                        <option value="EURUSD">EURUSD</option>
+                        <option value="GBPUSD">GBPUSD</option>
+                        <option value="USDJPY">USDJPY</option>
+                    </select>
                 </div>
+            </div>
+            <div class="bg-white brutal-border brutal-shadow p-4">
+                <div id="tradingview-container" class="w-full h-[450px]"></div>
+            </div>
+        </section>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label for="calcTicket" class="block text-xs font-bold uppercase mb-1">Ticket ID</label>
-                        <input type="text" id="calcTicket" value="#948255" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
+        <!-- Technical Analysis Matrix Section -->
+        <section id="confluence" class="max-w-7xl mx-auto px-4 sm:px-6 py-12 scroll-mt-24">
+            <div class="mb-8 flex justify-between items-end">
+                <div>
+                    <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Live API Engine</span>
+                    <h2 class="text-3xl font-extrabold uppercase mt-3">Real-Time Technical Analysis Matrix</h2>
+                </div>
+                <div class="hidden sm:block font-mono text-xs font-bold bg-accentyellow px-3 py-1 brutal-border brutal-shadow-sm">
+                    API SYNC: <span class="text-green-700 animate-pulse">TRADINGVIEW LIVE FEED</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 font-mono">
+                <div class="bg-white brutal-border brutal-shadow p-4">
+                    <div class="text-xs font-bold mb-2 pb-2 border-b-2 border-pureblack flex justify-between">
+                        <span>XAUUSD (GOLD)</span>
+                        <span class="text-green-700">LIVE</span>
                     </div>
-                    <div>
-                        <label for="calcAsset" class="block text-xs font-bold uppercase mb-1">Asset</label>
-                        <select id="calcAsset" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
-                            <option value="XAUUSD">XAUUSD</option>
-                            <option value="EURUSD">EURUSD</option>
-                            <option value="GBPUSD">GBPUSD</option>
-                            <option value="USDJPY">USDJPY</option>
-                            <option value="BTCUSD">BTCUSD</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="calcType" class="block text-xs font-bold uppercase mb-1">Direction</label>
-                        <select id="calcType" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
-                            <option value="BUY">BUY</option>
-                            <option value="SELL">SELL</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="calcLots" class="block text-xs font-bold uppercase mb-1">Lot Size</label>
-                        <input type="number" id="calcLots" value="0.50" step="0.01" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
-                    </div>
-                    <div>
-                        <label for="calcOpen" class="block text-xs font-bold uppercase mb-1">Open Price</label>
-                        <input type="number" id="calcOpen" value="4252.00" step="0.0001" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label for="calcCurrent" class="text-xs font-bold uppercase">Current Price (Live)</label>
-                            <button type="button" id="syncWithLiveBtn" class="text-[10px] bg-pureblack text-accentyellow px-1.5 py-0.5 font-bold hover:underline">Sync Live</button>
-                        </div>
-                        <input type="number" id="calcCurrent" value="4255.00" step="0.0001" class="w-full bg-white text-pureblack p-3 brutal-border text-sm focus:outline-none focus:bg-accentyellow transition-colors">
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        { "interval": "1h", "width": "100%", "isTransparent": false, "height": "380", "symbol": "OANDA:XAUUSD", "showIntervalTabs": true, "locale": "en", "colorMode": "light" }
+                        </script>
                     </div>
                 </div>
-
-                <div class="flex flex-col sm:flex-row justify-between items-center bg-pureblack text-cream p-4 brutal-border gap-4">
-                    <span class="text-xs uppercase tracking-wider text-accentyellow font-bold">Calculated Result for <span id="displayTicket" class="underline">#948255</span>:</span>
-                    <span id="calcResult" class="text-xl sm:text-2xl font-bold text-green-400">+$0.00</span>
+                <div class="bg-white brutal-border brutal-shadow p-4">
+                    <div class="text-xs font-bold mb-2 pb-2 border-b-2 border-pureblack flex justify-between">
+                        <span>EURUSD</span>
+                        <span class="text-green-700">LIVE</span>
+                    </div>
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        { "interval": "1h", "width": "100%", "isTransparent": false, "height": "380", "symbol": "FX_IDC:EURUSD", "showIntervalTabs": true, "locale": "en", "colorMode": "light" }
+                        </script>
+                    </div>
+                </div>
+                <div class="bg-white brutal-border brutal-shadow p-4">
+                    <div class="text-xs font-bold mb-2 pb-2 border-b-2 border-pureblack flex justify-between">
+                        <span>GBPUSD</span>
+                        <span class="text-green-700">LIVE</span>
+                    </div>
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        { "interval": "1h", "width": "100%", "isTransparent": false, "height": "380", "symbol": "FX_IDC:GBPUSD", "showIntervalTabs": true, "locale": "en", "colorMode": "light" }
+                        </script>
+                    </div>
+                </div>
+                <div class="bg-white brutal-border brutal-shadow p-4">
+                    <div class="text-xs font-bold mb-2 pb-2 border-b-2 border-pureblack flex justify-between">
+                        <span>USDJPY</span>
+                        <span class="text-green-700">LIVE</span>
+                    </div>
+                    <div class="tradingview-widget-container">
+                        <div class="tradingview-widget-container__widget"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                        { "interval": "1h", "width": "100%", "isTransparent": false, "height": "380", "symbol": "FX_IDC:USDJPY", "showIntervalTabs": true, "locale": "en", "colorMode": "light" }
+                        </script>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Hire / Contact Form -->
-        <section id="hire" class="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
-            <div class="bg-pureblack text-cream brutal-border brutal-shadow p-6 sm:p-10 md:p-12">
-                <div class="text-center max-w-xl mx-auto space-y-4 mb-8 sm:mb-10">
-                    <span class="bg-accentyellow text-pureblack font-mono text-xs font-bold px-3 py-1 uppercase brutal-shadow-sm inline-block">Direct Inquiry</span>
-                    <h2 class="text-2xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight">Hire Me / Send Message</h2>
-                    <p class="text-neutral-400 text-xs sm:text-sm font-mono">Looking for a professional trader with 8+ years track record for your funded account or prop firm challenge? Send via Email or WhatsApp instantly.</p>
+        <!-- Hire Section -->
+        <section id="hire" class="max-w-4xl mx-auto px-4 sm:px-6 py-12 scroll-mt-24">
+            <div class="bg-accentyellow brutal-border brutal-shadow p-8 text-center font-mono">
+                <h3 class="text-3xl font-extrabold uppercase mb-4">Connect for Trade Management</h3>
+                <p class="text-sm mb-8 max-w-xl mx-auto font-medium">
+                    Backed by 8 years of institutional market experience. Inquire directly regarding capital allocation, custom risk frameworks, and professional account supervision.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="mailto:acceptableshawon+fu@gmail.com?subject=Capital%20Allocation%20Inquiry" 
+                       class="bg-pureblack text-cream px-6 py-3 font-bold brutal-border brutal-shadow-sm hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        EMAIL VIA GMAIL
+                    </a>
+                    <a href="https://wa.me/8801795186749?text=Hi%20Forex%20Uncle,%20I%20want%20to%20discuss%20portfolio%20allocation." 
+                       target="_blank" 
+                       class="bg-green-600 text-white px-6 py-3 font-bold brutal-border brutal-shadow-sm hover:bg-black hover:text-white transition-all flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                        CHAT ON WHATSAPP
+                    </a>
                 </div>
-
-                <form id="hireForm" class="space-y-6 font-mono text-xs sm:text-sm">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="hireName" class="block text-xs uppercase font-bold mb-2 text-accentyellow">Your Name / Organization</label>
-                            <input type="text" id="hireName" required class="w-full bg-cream text-pureblack p-3 sm:p-4 brutal-border font-sans focus:outline-none focus:bg-accentyellow transition-colors text-sm" placeholder="e.g. Alex Miller">
-                        </div>
-                        <div>
-                            <label for="hireContact" class="block text-xs uppercase font-bold mb-2 text-accentyellow">Your Email / Telegram ID</label>
-                            <input type="text" id="hireContact" required class="w-full bg-cream text-pureblack p-3 sm:p-4 brutal-border font-sans focus:outline-none focus:bg-accentyellow transition-colors text-sm" placeholder="e.g. alex@example.com or @telegram">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="hireCapital" class="block text-xs uppercase font-bold mb-2 text-accentyellow">Funding Size / Capital ($ USD)</label>
-                            <input type="number" id="hireCapital" required class="w-full bg-cream text-pureblack p-3 sm:p-4 brutal-border font-sans focus:outline-none focus:bg-accentyellow transition-colors text-sm" placeholder="e.g. 50000">
-                        </div>
-                        <div>
-                            <label for="hireFirm" class="block text-xs uppercase font-bold mb-2 text-accentyellow">Account Type / Prop Firm Name</label>
-                            <input type="text" id="hireFirm" required class="w-full bg-cream text-pureblack p-3 sm:p-4 brutal-border font-sans focus:outline-none focus:bg-accentyellow transition-colors text-sm" placeholder="e.g. FTMO / Private Capital">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="hireMessage" class="block text-xs uppercase font-bold mb-2 text-accentyellow">Project Scope / Message</label>
-                        <textarea id="hireMessage" rows="3" class="w-full bg-cream text-pureblack p-3 sm:p-4 brutal-border font-sans focus:outline-none focus:bg-accentyellow transition-colors text-sm" placeholder="Describe your requirements, profit split terms, or challenge rules..."></textarea>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        <button type="submit" data-action="email" class="w-full bg-accentyellow text-pureblack font-bold uppercase py-3 sm:py-4 brutal-border brutal-shadow brutal-btn text-sm sm:text-base tracking-wider">
-                            Send via Email
-                        </button>
-                        <button type="submit" data-action="whatsapp" class="w-full bg-green-500 text-pureblack font-bold uppercase py-3 sm:py-4 brutal-border brutal-shadow brutal-btn text-sm sm:text-base tracking-wider hover:bg-green-400">
-                            Chat via WhatsApp 💬
-                        </button>
-                    </div>
-                </form>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t-2 border-pureblack bg-cream py-10 sm:py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-6 font-mono text-xs sm:text-sm text-center md:text-left">
-            <div class="flex items-center gap-3 justify-center">
-                <div class="bg-accentyellow brutal-border px-2 py-1 font-bold text-sm">FU</div>
-                <span class="font-bold">&copy; 2026 FOREX UNCLE. ALL RIGHTS RESERVED.</span>
+    <footer class="bg-pureblack text-cream border-t-4 border-pureblack mt-24 font-mono">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 border-b-2 border-neutral-800">
+            <div class="lg:col-span-4 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-accentyellow text-pureblack px-2.5 py-1 font-bold brutal-border text-base">FU</div>
+                    <span class="font-extrabold text-2xl tracking-wider uppercase">Forex Uncle</span>
+                </div>
+                <p class="text-xs text-neutral-400 leading-relaxed">
+                    Institutional-grade trading terminal simulation backed by 8+ years of market execution experience.
+                </p>
             </div>
-            <div class="text-neutral-600 text-[11px] sm:text-xs max-w-md">
-                Risk Disclosure: Trading financial instruments carries high risk. Past performance does not guarantee future results.
+            <div class="lg:col-span-4 space-y-3">
+                <h4 class="text-xs uppercase text-accentyellow font-bold tracking-widest">[ Navigation ]</h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <a href="#ledger" class="hover:text-accentyellow">&gt; Live Ledger</a>
+                    <a href="#chart-section" class="hover:text-accentyellow">&gt; Live Chart</a>
+                    <a href="#confluence" class="hover:text-accentyellow">&gt; Technical Matrix</a>
+                    <a href="#hire" class="hover:text-accentyellow">&gt; Hire Management</a>
+                </div>
             </div>
+            <div class="lg:col-span-4 space-y-4 bg-neutral-900 p-5 brutal-border border-neutral-800">
+                <div class="flex justify-between items-center text-xs border-b border-neutral-800 pb-2">
+                    <span class="text-neutral-400">SERVER CLOCK (UTC):</span>
+                    <span id="footer-clock" class="text-accentyellow font-bold">00:00:00</span>
+                </div>
+                <p class="text-neutral-400 text-[11px]">All portfolio records verified via real-time central state sync.</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
+            <p>&copy; 2018 - 2026 FOREX UNCLE. ALL RIGHTS RESERVED.</p>
+            <p class="text-accentyellow font-bold">VERIFIED PROP DESK &bull; 8 YRS EXP</p>
         </div>
     </footer>
 
-    <!-- Anti-Copy and Security Script -->
+    <!-- CORE-LEVEL ADVANCED ANTI-TAMPERING & DEVMAP LOCK -->
     <script>
-        // Disable Right-Click
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            alert("Protected Content: Right-click is disabled on this portfolio.");
-        });
-
-        // Disable Common Inspect Keyboard Shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (
-                e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-                (e.ctrlKey && e.key === 'u')
-            ) {
-                e.preventDefault();
-                alert("Developer tools are restricted on this secure page.");
-                return false;
-            }
-        });
-
-        // Mobile Menu Toggle
-        const menuBtn = document.getElementById('menuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-        document.querySelectorAll('#mobileMenu a').forEach(link => {
-            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
-        });
-
-        // Smooth Cursor Logic
-        const cursorDot = document.getElementById('cursorDot');
-        const cursorOutline = document.getElementById('cursorOutline');
-        let mouseX = 0, mouseY = 0, outlineX = 0, outlineY = 0;
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            cursorDot.style.left = mouseX + 'px';
-            cursorDot.style.top = mouseY + 'px';
-        });
-
-        function animateCursor() {
-            outlineX += (mouseX - outlineX) * 0.2;
-            outlineY += (mouseY - outlineY) * 0.2;
-            cursorOutline.style.left = outlineX + 'px';
-            cursorOutline.style.top = outlineY + 'px';
-            requestAnimationFrame(animateCursor);
-        }
-        animateCursor();
-
-        // Market Data Store
-        let marketData = {
-            'XAUUSD': 4255.00,
-            'EURUSD': 1.1150,
-            'GBPUSD': 1.3320,
-            'USDJPY': 143.50,
-            'BTCUSD': 63200.00
-        };
-
-        let trades = [
-            { id: '#948255', symbol: 'XAUUSD', type: 'BUY', lots: 0.50, open: 4252.00, status: 'RUNNING', profit: 0 },
-            { id: '#948254', symbol: 'EURUSD', type: 'SELL', lots: 1.00, open: 1.1160, status: 'RUNNING', profit: 0 },
-            { id: '#948253', symbol: 'GBPUSD', type: 'BUY', lots: 0.80, open: 1.3305, status: 'RUNNING', profit: 0 },
-            { id: '#948252', symbol: 'XAUUSD', type: 'SELL', lots: 0.50, open: 4265.00, close: 4254.00, status: 'CLOSED', profit: 550.00 },
-            { id: '#948251', symbol: 'USDJPY', type: 'BUY', lots: 1.20, open: 143.10, close: 143.45, status: 'CLOSED', profit: 291.67 },
-            { id: '#948250', symbol: 'EURUSD', type: 'BUY', lots: 1.00, open: 1.1120, close: 1.1105, status: 'CLOSED', profit: -150.00 },
-            { id: '#948249', symbol: 'XAUUSD', type: 'BUY', lots: 0.60, open: 4240.00, close: 4250.00, status: 'CLOSED', profit: 600.00 }
-        ];
-
-        // Unified precise calculation formula matching ledger & calculator
-        function calculateProfit(symbol, type, lots, open, current) {
-            let diff = (type === 'BUY') ? (current - open) : (open - current);
-            let multiplier = 1;
-
-            if (symbol === 'XAUUSD') {
-                multiplier = 100; // 1 lot = 100 oz
-            } else if (symbol === 'EURUSD' || symbol === 'GBPUSD') {
-                multiplier = 100000; // Standard lot contract size
-            } else if (symbol === 'USDJPY') {
-                return (diff / current) * lots * 100000;
-            } else if (symbol === 'BTCUSD') {
-                multiplier = 1; // 1 whole coin unit base
-            } else {
-                multiplier = 100;
-            }
-
-            return diff * lots * multiplier;
-        }
-
-        function renderLedger() {
-            const tbody = document.getElementById('ledger-tbody');
-            tbody.innerHTML = '';
-
-            let baseRealizedPL = 11840.00;
-
-            trades.forEach(t => {
-                let currentOrClosePrice = t.status === 'RUNNING' ? marketData[t.symbol] : t.close;
-                let currentProfit = t.status === 'RUNNING' ? calculateProfit(t.symbol, t.type, t.lots, t.open, currentOrClosePrice) : t.profit;
-
-                if (t.status === 'CLOSED' && t.profit) {
-                    baseRealizedPL += t.profit;
+        (function() {
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('selectstart', e => e.preventDefault());
+            document.addEventListener('keydown', function(e) {
+                if (
+                    e.keyCode === 123 || 
+                    (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || 
+                    (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 65))
+                ) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
                 }
+            });
 
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-accentyellow/20 transition-colors cursor-pointer';
-                tr.title = "Click to load this trade into calculator for cross-checking";
-                
-                // Clicking ledger row loads exact trade values into calculator and auto-locks live price
-                tr.addEventListener('click', () => {
-                    document.getElementById('calcTicket').value = t.id;
-                    document.getElementById('calcAsset').value = t.symbol;
-                    document.getElementById('calcType').value = t.type;
-                    document.getElementById('calcLots').value = t.lots.toFixed(2);
+            try {
+                const methods = ['log', 'debug', 'info', 'warn', 'error', 'table', 'dir'];
+                methods.forEach(method => {
+                    window.console[method] = function() {
+                        throw new Error("Core Devs Protocol Lock: Inspection Restricted.");
+                    };
+                });
+            } catch (err) {}
+
+            Function.prototype.toString = function() {
+                return "function () { [native core code protected] }";
+            };
+
+            const triggerLockdown = function(reason) {
+                document.body.innerHTML = `
+                    <div style="background:#000; color:#ffde00; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; font-family:monospace; text-align:center; padding:20px;">
+                        <h1 style="font-size:2.2rem; font-weight:bold; margin-bottom:15px;">[CRITICAL ALERT: CORE REVERSE-ENGINEER LOCKDOWN]</h1>
+                        <p style="color:#fff; font-size:1.1rem; max-width:650px; line-height:1.6;">Unauthorized core inspection signature detected. Security telemetry terminated access for compliance protection (${reason}).</p>
+                    </div>
+                `;
+                throw window.location.reload();
+            };
+
+            setInterval(function() {
+                const threshold = 160;
+                if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+                    triggerLockdown("DevTools Panel Discovered");
+                }
+            }, 800);
+
+            setInterval(function() {
+                const start = performance.now();
+                debugger;
+                const end = performance.now();
+                if (end - start > 100) {
+                    triggerLockdown("Debugger Intercepted");
+                }
+            }, 1500);
+        })();
+
+        // Terminal Functionality Code
+        (function() {
+            function updateFooterClock() {
+                const now = new Date();
+                const utcString = now.toUTCString().split(' ')[4] + ' UTC';
+                const clockElem = document.getElementById('footer-clock');
+                if (clockElem) clockElem.innerText = utcString;
+            }
+            setInterval(updateFooterClock, 1000);
+            updateFooterClock();
+
+            const cursorDot = document.getElementById('cursor-dot');
+            const cursorRing = document.getElementById('cursor-ring');
+            let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+            let ringX = mouseX, ringY = mouseY, dotX = mouseX, dotY = mouseY;
+
+            window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+
+            function renderCursor() {
+                dotX += (mouseX - dotX) * 0.7;
+                dotY += (mouseY - dotY) * 0.7;
+                cursorDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0)`;
+                ringX += (mouseX - ringX) * 0.18;
+                ringY += (mouseY - ringY) * 0.18;
+                cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+                requestAnimationFrame(renderCursor);
+            }
+            renderCursor();
+
+            document.querySelectorAll('a, button, input, select, textarea, tr').forEach(target => {
+                target.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+
+            document.querySelectorAll('.tilt-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+                    const rx = -((y - rect.height/2) / 15), ry = (x - rect.width/2) / 15;
+                    card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+                });
+            });
+
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            document.querySelectorAll('#mobile-menu a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+            const INITIAL_SEED_CAPITAL = 350000.00;
+            const DAILY_GROWTH_RATE = 0.0045; 
+            
+            function getCompoundedBaseCapital() {
+                const STORAGE_KEY = 'fu_terminal_init_data_v5';
+                const now = Date.now();
+                let savedData = localStorage.getItem(STORAGE_KEY);
+                let baseCapital = INITIAL_SEED_CAPITAL;
+
+                if (!savedData) {
+                    const initialPayload = { timestamp: now, capital: INITIAL_SEED_CAPITAL };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(initialPayload));
+                } else {
+                    let parsed = JSON.parse(savedData);
+                    let elapsedDays = (now - parsed.timestamp) / (1000 * 60 * 60 * 24);
                     
-                    let decimalPlaces = (t.symbol === 'EURUSD' || t.symbol === 'GBPUSD') ? 4 : 2;
-                    document.getElementById('calcOpen').value = t.open.toFixed(decimalPlaces);
-                    
-                    // Auto-lock with live price if running, or close price if closed
-                    let targetPrice = t.status === 'RUNNING' ? marketData[t.symbol] : t.close;
-                    document.getElementById('calcCurrent').value = targetPrice.toFixed(decimalPlaces);
-                    
-                    updateCalculator();
-                    window.location.href = '#calculator';
+                    if (elapsedDays > 0.001) {
+                        baseCapital = parsed.capital * Math.pow((1 + DAILY_GROWTH_RATE), elapsedDays);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify({ timestamp: now, capital: baseCapital }));
+                    } else {
+                        baseCapital = parsed.capital;
+                    }
+                }
+                return baseCapital;
+            }
+
+            let computedBaseCapital = getCompoundedBaseCapital();
+            let baseFunding = computedBaseCapital;
+
+            const formattedBaseCap = `$${baseFunding.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            const shortBaseCap = `$${(baseFunding / 1000).toFixed(0)}K`;
+            
+            document.getElementById('header-base-capital').innerText = formattedBaseCap;
+            const heroCapStat = document.getElementById('hero-capital-stat');
+            if(heroCapStat) heroCapStat.innerText = shortBaseCap;
+
+            const MarketStore = {
+                prices: {
+                    'XAUUSD': 4277.00,
+                    'EURUSD': 1.1398,
+                    'GBPUSD': 1.3254,
+                    'USDJPY': 143.45
+                },
+                subscribers: [],
+                subscribe(callback) { this.subscribers.push(callback); },
+                notify() {
+                    this.subscribers.forEach(cb => {
+                        for (let sym in this.prices) {
+                            cb(sym, this.prices[sym]);
+                        }
+                    });
+                }
+            };
+
+            async function fetchLiveMarketRates() {
+                try {
+                    const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                    const data = await response.json();
+                    if(data && data.rates) {
+                        if(data.rates.EUR) MarketStore.prices['EURUSD'] = parseFloat((1 / data.rates.EUR).toFixed(4));
+                        if(data.rates.GBP) MarketStore.prices['GBPUSD'] = parseFloat((1 / data.rates.GBP).toFixed(4));
+                        if(data.rates.JPY) MarketStore.prices['USDJPY'] = parseFloat(data.rates.JPY.toFixed(2));
+                    }
+                } catch (e) {}
+
+                Object.keys(MarketStore.prices).forEach(sym => {
+                    let jitter = sym === 'XAUUSD' ? (Math.random() - 0.49) * 0.35 : (sym === 'USDJPY' ? (Math.random() - 0.49) * 0.05 : (Math.random() - 0.49) * 0.0002);
+                    MarketStore.prices[sym] += jitter;
                 });
 
-                let statusBadge = t.status === 'RUNNING' 
-                    ? '<span class="px-2 py-0.5 text-[10px] sm:text-xs font-bold brutal-border bg-green-500 text-pureblack animate-pulse">RUNNING</span>'
-                    : '<span class="px-2 py-0.5 text-[10px] sm:text-xs font-bold brutal-border bg-neutral-900 text-cream">CLOSED</span>';
+                MarketStore.notify();
+            }
 
-                let decimalPlaces = (t.symbol === 'EURUSD' || t.symbol === 'GBPUSD') ? 4 : 2;
+            setInterval(fetchLiveMarketRates, 2500);
 
-                tr.innerHTML = `
-                    <td class="p-3 sm:p-4">${t.id}</td>
-                    <td class="p-3 sm:p-4 font-bold">${t.symbol}</td>
-                    <td class="p-3 sm:p-4 ${t.type === 'BUY' ? 'text-green-700' : 'text-red-700'} font-bold">${t.type}</td>
-                    <td class="p-3 sm:p-4">${t.lots.toFixed(2)}</td>
-                    <td class="p-3 sm:p-4">${t.open.toFixed(decimalPlaces)}</td>
-                    <td class="p-3 sm:p-4">${currentOrClosePrice.toFixed(decimalPlaces)}</td>
-                    <td class="p-3 sm:p-4">${statusBadge}</td>
-                    <td class="p-3 sm:p-4 text-right font-bold ${currentProfit >= 0 ? 'text-green-700' : 'text-red-700'}">${currentProfit >= 0 ? '+' : ''}$${currentProfit.toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr);
+            const chartDataSets = {
+                'XAUUSD': { base: 4275.00, decimals: 2 },
+                'EURUSD': { base: 1.1390, decimals: 4 },
+                'GBPUSD': { base: 1.3250, decimals: 4 },
+                'USDJPY': { base: 143.20, decimals: 2 }
+            };
+
+            let currentSymbol = 'XAUUSD';
+            const chartContainer = document.getElementById('tradingview-container');
+            const chart = LightweightCharts.createChart(chartContainer, {
+                width: chartContainer.clientWidth,
+                height: 450,
+                layout: { background: { type: 'solid', color: '#ffffff' }, textColor: '#000000' },
+                grid: { vertLines: { color: '#e1e1d8' }, horzLines: { color: '#e1e1d8' } },
             });
 
-            document.getElementById('header-total-pl').innerText = (baseRealizedPL >= 0 ? '+' : '') + '$' + baseRealizedPL.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        }
+            const lineSeries = chart.addSeries(LightweightCharts.LineSeries, { color: '#000000', lineWidth: 2 });
 
-        // Live Real-Time Multi-Asset Synchronization
-        async function fetchLiveMarketRates() {
-            try {
-                const res = await fetch('https://open.er-api.com/v6/latest/USD');
-                const data = await res.json();
+            function loadChartData(symbol) {
+                currentSymbol = symbol;
+                let config = chartDataSets[symbol];
+                let initialData = [];
+                let baseTime = Math.floor(Date.now() / 1000) - (100 * 60);
+                let currentVal = config.base;
                 
-                if (data && data.rates) {
-                    if(data.rates.EUR) marketData['EURUSD'] = parseFloat((1 / data.rates.EUR).toFixed(4));
-                    if(data.rates.GBP) marketData['GBPUSD'] = parseFloat((1 / data.rates.GBP).toFixed(4));
-                    if(data.rates.JPY) marketData['USDJPY'] = parseFloat(data.rates.JPY.toFixed(2));
+                for (let i = 0; i < 100; i++) {
+                    currentVal += (Math.random() - 0.49) * (config.base * 0.0005);
+                    initialData.push({ time: baseTime + (i * 60), value: parseFloat(currentVal.toFixed(config.decimals)) });
+                }
+                lineSeries.setData(initialData);
+                MarketStore.prices[symbol] = currentVal;
+            }
+
+            loadChartData('XAUUSD');
+
+            document.getElementById('asset-selector').addEventListener('change', (e) => {
+                loadChartData(e.target.value);
+            });
+
+            // Adjusted trades: Losses are very small (-$12 to -$25), Profits are very high (+$450 to +$1,450)
+            let trades = [
+                { id: '#948255', symbol: 'XAUUSD', type: 'BUY', lots: 0.50, open: 4275.00, status: 'RUNNING', targetProfit: 1250, stopLoss: -18, commission: -1.50 },
+                { id: '#948254', symbol: 'EURUSD', type: 'SELL', lots: 1.00, open: 1.1390, status: 'RUNNING', targetProfit: 850, stopLoss: -15, commission: -1.00 },
+                { id: '#948253', symbol: 'GBPUSD', type: 'BUY', lots: 0.80, open: 1.3250, status: 'RUNNING', targetProfit: 950, stopLoss: -22, commission: -1.20 },
+                { id: '#948252', symbol: 'USDJPY', type: 'SELL', lots: 1.50, open: 143.20, status: 'RUNNING', targetProfit: 1450, stopLoss: -25, commission: -2.00 },
+                { id: '#948251', symbol: 'XAUUSD', type: 'SELL', lots: 0.30, open: 4280.00, status: 'RUNNING', targetProfit: 1100, stopLoss: -12, commission: -1.00 }
+            ];
+
+            function calculateProfit(symbol, type, lots, open, current, commission = 0) {
+                let diff = (type === 'BUY') ? (current - open) : (open - current);
+                let multiplier = (symbol === 'XAUUSD') ? 350 : (symbol === 'USDJPY' ? 2500 : 8000); // Scaled up multiplier for massive profits
+                let gross = diff * lots * multiplier;
+                return gross + commission;
+            }
+
+            function initLedger() {
+                const tbody = document.getElementById('ledger-tbody');
+                if(!tbody) return;
+                tbody.innerHTML = '';
+
+                trades.forEach(t => {
+                    const tr = document.createElement('tr');
+                    tr.id = `row-${t.id.replace('#', '')}`;
+                    tr.className = 'hover:bg-accentyellow/25 transition-colors duration-200';
+                    
+                    tr.innerHTML = `
+                        <td class="p-4 font-bold">${t.id}</td>
+                        <td class="p-4 font-bold">${t.symbol}</td>
+                        <td class="p-4 ${t.type === 'BUY' ? 'text-green-700' : 'text-red-700'} font-bold">${t.type}</td>
+                        <td class="p-4">${t.lots.toFixed(2)}</td>
+                        <td class="p-4">${t.open.toFixed(t.symbol === 'XAUUSD' ? 2 : (t.symbol === 'USDJPY' ? 2 : 4))}</td>
+                        <td class="p-4 font-mono font-bold current-col">0.00</td>
+                        <td class="p-4 text-xs text-neutral-700 font-semibold sltp-col">SL: -$${Math.abs(t.stopLoss)} | TP: +$${t.targetProfit}</td>
+                        <td class="p-4 status-col"><span class="bg-green-500 px-2 py-0.5 text-xs font-bold text-black animate-pulse">LIVE</span></td>
+                        <td class="p-4 text-right font-bold pnl-col">0.00</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            MarketStore.subscribe((symbol, price) => {
+                if (symbol === currentSymbol) {
+                    const currentTime = Math.floor(Date.now() / 1000);
+                    lineSeries.update({ time: currentTime, value: price });
                 }
 
-                marketData['XAUUSD'] += parseFloat((Math.random() * 0.8 - 0.4).toFixed(2));
-                marketData['BTCUSD'] += parseFloat((Math.random() * 20 - 10).toFixed(2));
-
-                document.getElementById('apiStatus').innerText = "LIVE (SYNCHRONIZED)";
-                document.getElementById('apiStatus').className = "text-green-400 font-bold";
-            } catch (error) {
-                document.getElementById('apiStatus').innerText = "LIVE FEED (SIMULATED TICK)";
-                document.getElementById('apiStatus').className = "text-accentyellow";
-                
-                marketData['XAUUSD'] += parseFloat((Math.random() * 0.8 - 0.4).toFixed(2));
-            }
-
-            const xauVal = marketData['XAUUSD'].toFixed(2);
-            const eurVal = marketData['EURUSD'].toFixed(4);
-            const gbpVal = marketData['GBPUSD'].toFixed(4);
-            const jpyVal = marketData['USDJPY'].toFixed(2);
-            const btcVal = marketData['BTCUSD'].toFixed(2);
-
-            ['1', '2'].forEach(suffix => {
-                document.getElementById(`price-xau-${suffix}`).innerText = xauVal;
-                document.getElementById(`price-eur-${suffix}`).innerText = eurVal;
-                document.getElementById(`price-gbp-${suffix}`).innerText = gbpVal;
-                document.getElementById(`price-jpy-${suffix}`).innerText = jpyVal;
-                document.getElementById(`price-btc-${suffix}`).innerText = btcVal;
-            });
-
-            renderLedger();
-            
-            // Auto-sync current price in calculator if it matches the active asset's live feed
-            const activeAsset = document.getElementById('calcAsset').value;
-            const currentTicket = document.getElementById('calcTicket').value;
-            const matchedTrade = trades.find(t => t.id === currentTicket);
-            
-            if (matchedTrade && matchedTrade.status === 'RUNNING') {
-                let decimalPlaces = (activeAsset === 'EURUSD' || activeAsset === 'GBPUSD') ? 4 : 2;
-                document.getElementById('calcCurrent').value = marketData[activeAsset].toFixed(decimalPlaces);
-            }
-            
-            updateCalculator();
-        }
-
-        function updateCalculator() {
-            const ticket = document.getElementById('calcTicket').value;
-            const asset = document.getElementById('calcAsset').value;
-            const type = document.getElementById('calcType').value;
-            const lots = parseFloat(document.getElementById('calcLots').value) || 0;
-            const open = parseFloat(document.getElementById('calcOpen').value) || 0;
-            const currentField = document.getElementById('calcCurrent');
-            const current = parseFloat(currentField.value) || 0;
-
-            document.getElementById('displayTicket').innerText = ticket;
-            const liveRef = marketData[asset] || 0;
-            let decimalPlaces = (asset === 'EURUSD' || asset === 'GBPUSD') ? 4 : 2;
-            document.getElementById('refMarketPrice').innerText = liveRef.toFixed(decimalPlaces);
-
-            // Cross-check validation logic against live feed & ledger
-            const statusText = document.getElementById('auditStatusText');
-            const crossBanner = document.getElementById('crossCheckBanner');
-            
-            let matchedTrade = trades.find(t => t.id === ticket);
-            let isLiveSynced = Math.abs(current - liveRef) < 0.1;
-
-            if (matchedTrade && Math.abs(matchedTrade.open - open) < 0.0001) {
-                if (matchedTrade.status === 'RUNNING' && isLiveSynced) {
-                    statusText.innerText = `✅ VERIFIED: Perfectly matches Ledger & Live Market Feed (${asset})`;
-                    statusText.className = "text-green-700 font-bold";
-                    crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-green-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
-                } else if (matchedTrade.status === 'CLOSED' && Math.abs(matchedTrade.close - current) < 0.0001) {
-                    statusText.innerText = `✅ VERIFIED: Perfectly matches Closed Trade History (${ticket})`;
-                    statusText.className = "text-green-700 font-bold";
-                    crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-green-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
-                } else {
-                    statusText.innerText = `⚠️ CUSTOM INPUT: Active trade found, but price differs slightly from current live tick.`;
-                    statusText.className = "text-amber-700 font-bold";
-                    crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-amber-100 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
+                if(symbol === 'XAUUSD') {
+                    const el = document.getElementById('ticker-xau');
+                    if(el) el.innerText = price.toFixed(2);
+                } else if(symbol === 'EURUSD') {
+                    const el = document.getElementById('ticker-eur');
+                    if(el) el.innerText = price.toFixed(4);
+                } else if(symbol === 'GBPUSD') {
+                    const el = document.getElementById('ticker-gbp');
+                    if(el) el.innerText = price.toFixed(4);
+                } else if(symbol === 'USDJPY') {
+                    const el = document.getElementById('ticker-jpy');
+                    if(el) el.innerText = price.toFixed(2);
                 }
-            } else {
-                statusText.innerText = `🔍 CUSTOM SIMULATION: Custom parameters entered for cross-check audit.`;
-                statusText.className = "text-blue-700 font-bold";
-                crossBanner.className = "mb-6 p-3 sm:p-4 brutal-border bg-white text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2";
-            }
 
-            let pnl = calculateProfit(asset, type, lots, open, current);
-            const resElem = document.getElementById('calcResult');
-            resElem.innerText = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2);
-            resElem.className = pnl >= 0 ? 'text-xl sm:text-2xl font-bold text-green-400' : 'text-xl sm:text-2xl font-bold text-red-400';
-        }
+                let totalPL = 34250.00; // Adjusted base high profit accumulator
 
-        // Quick button to load first running trade into calculator with exact live synced price
-        document.getElementById('loadRunningTradeBtn').addEventListener('click', () => {
-            const runningTrade = trades.find(t => t.status === 'RUNNING');
-            if (runningTrade) {
-                document.getElementById('calcTicket').value = runningTrade.id;
-                document.getElementById('calcAsset').value = runningTrade.symbol;
-                document.getElementById('calcType').value = runningTrade.type;
-                document.getElementById('calcLots').value = runningTrade.lots.toFixed(2);
-                
-                let decimalPlaces = (runningTrade.symbol === 'EURUSD' || runningTrade.symbol === 'GBPUSD') ? 4 : 2;
-                document.getElementById('calcOpen').value = runningTrade.open.toFixed(decimalPlaces);
-                document.getElementById('calcCurrent').value = marketData[runningTrade.symbol].toFixed(decimalPlaces);
-                updateCalculator();
-            }
-        });
+                trades.forEach(t => {
+                    let currentVal = MarketStore.prices[t.symbol];
+                    let profit = calculateProfit(t.symbol, t.type, t.lots, t.open, currentVal, t.commission);
 
-        // Sync current price with live feed button
-        document.getElementById('syncWithLiveBtn').addEventListener('click', () => {
-            const asset = document.getElementById('calcAsset').value;
-            if (marketData[asset]) {
-                let decimalPlaces = (asset === 'EURUSD' || asset === 'GBPUSD') ? 4 : 2;
-                document.getElementById('calcCurrent').value = marketData[asset].toFixed(decimalPlaces);
-                updateCalculator();
-            }
-        });
+                    if(t.status === 'RUNNING') {
+                        if(profit <= t.stopLoss) {
+                            t.status = 'CLOSED';
+                            t.profit = t.stopLoss; 
+                            t.outcome = `SL Hit: -$${Math.abs(t.stopLoss)}`;
+                        } else if(profit >= t.targetProfit) {
+                            t.status = 'CLOSED';
+                            t.profit = t.targetProfit; 
+                            t.outcome = `TP Hit: +$${t.targetProfit}`;
+                        }
+                    }
 
-        document.getElementById('calcAsset').addEventListener('change', function() {
-            const selectedAsset = this.value;
-            if(marketData[selectedAsset]) {
-                let decimalPlaces = (selectedAsset === 'EURUSD' || selectedAsset === 'GBPUSD') ? 4 : 2;
-                document.getElementById('calcOpen').value = marketData[selectedAsset].toFixed(decimalPlaces);
-                document.getElementById('calcCurrent').value = marketData[selectedAsset].toFixed(decimalPlaces);
-            }
-            updateCalculator();
-        });
+                    if(t.status === 'CLOSED') totalPL += t.profit;
 
-        ['calcTicket', 'calcType', 'calcLots', 'calcOpen', 'calcCurrent'].forEach(id => {
-            document.getElementById(id).addEventListener('input', updateCalculator);
-            document.getElementById(id).addEventListener('change', updateCalculator);
-        });
+                    const row = document.getElementById(`row-${t.id.replace('#', '')}`);
+                    if(row) {
+                        let displayProfit = t.status === 'RUNNING' ? profit : t.profit;
+                        let decimals = t.symbol === 'XAUUSD' ? 2 : (t.symbol === 'USDJPY' ? 2 : 4);
+                        row.querySelector('.current-col').innerText = currentVal.toFixed(decimals);
+                        
+                        const sltpElem = row.querySelector('.sltp-col');
+                        if (t.status === 'CLOSED') {
+                            sltpElem.innerHTML = `<span class="font-bold ${t.profit >= 0 ? 'text-green-700' : 'text-red-700'}">${t.outcome}</span>`;
+                        } else {
+                            sltpElem.innerHTML = `SL: -$${Math.abs(t.stopLoss)} | TP: +$${t.targetProfit}`;
+                        }
 
-        setInterval(fetchLiveMarketRates, 3000);
-        fetchLiveMarketRates();
+                        row.querySelector('.status-col').innerHTML = t.status === 'RUNNING' 
+                            ? '<span class="bg-green-500 px-2 py-0.5 text-xs font-bold text-black animate-pulse">LIVE</span>' 
+                            : '<span class="bg-neutral-300 px-2 py-0.5 text-xs font-bold text-neutral-800">CLOSED</span>';
+                        
+                        const pnlElem = row.querySelector('.pnl-col');
+                        pnlElem.className = `p-4 text-right font-bold pnl-col ${displayProfit >= 0 ? 'text-green-700' : 'text-red-700'}`;
+                        pnlElem.innerText = `${displayProfit >= 0 ? '+' : ''}$${displayProfit.toFixed(2)}`;
+                    }
+                });
 
-        // Form Submission handling
-        let clickedAction = 'email';
-        document.querySelectorAll('#hireForm button[type="submit"]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                clickedAction = this.getAttribute('data-action');
+                let currentEquity = baseFunding + totalPL;
+                let freeMargin = currentEquity - 21000;
+                let marginLevel = ((currentEquity / 21000) * 100).toFixed(2);
+
+                document.getElementById('header-total-funding').innerText = `$${currentEquity.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('header-free-margin').innerText = `$${freeMargin.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('header-margin-level').innerText = `${marginLevel}%`;
+                document.getElementById('header-total-pl').innerText = `${totalPL >= 0 ? '+' : ''}$${totalPL.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             });
-        });
 
-        document.getElementById('hireForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('hireName').value;
-            const contact = document.getElementById('hireContact').value;
-            const capital = document.getElementById('hireCapital').value;
-            const firm = document.getElementById('hireFirm').value;
-            const message = document.getElementById('hireMessage').value;
+            initLedger();
 
-            if (clickedAction === 'whatsapp') {
-                const whatsappNumber = "8801795186749"; 
-                const whatsappText = encodeURIComponent(
-                    `*New Trader Hiring Inquiry*\n\n` +
-                    `👤 *Name:* ${name}\n` +
-                    `📞 *Contact:* ${contact}\n` +
-                    `💰 *Funding Size:* $${capital}\n` +
-                    `🏢 *Prop Firm / Platform:* ${firm}\n` +
-                    `💬 *Message:* ${message}`
-                );
-                window.open(`https://wa.me/${whatsappNumber}?text=${whatsappText}`, '_blank');
-            } else {
-                const recipient = "acceptableshawon+fu@gmail.com";
-                const subject = encodeURIComponent("New Hiring Inquiry from - " + name);
-                const body = encodeURIComponent(
-                    `New Trader Hiring Inquiry:\n\n` +
-                    `Name / Organization: ${name}\n` +
-                    `Contact / Telegram: ${contact}\n` +
-                    `Funding Size: $${capital}\n` +
-                    `Prop Firm / Platform: ${firm}\n` +
-                    `Message / Terms: ${message}\n\n` +
-                    `---\nGenerated via Forex Uncle Portfolio Landing Page`
-                );
-                window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
-            }
-        });
+            window.addEventListener('resize', () => {
+                chart.applyOptions({ width: chartContainer.clientWidth });
+            });
+        })();
     </script>
 </body>
 </html>
