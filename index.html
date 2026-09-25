@@ -66,16 +66,25 @@
             transform: translateY(-2px);
         }
 
-        @keyframes ticker {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-50%, 0, 0); }
+        /* Smooth Infinite Ticker Styles */
+        .ticker-wrap {
+            overflow: hidden;
+            width: 100%;
+            background: #ffde00;
+            border-bottom: 2px solid #000000;
+            padding: 6px 0;
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            box-sizing: border-box;
         }
-        .animate-ticker {
-            display: flex;
-            width: max-content;
-            animation: ticker 25s linear infinite;
+        .ticker-track {
+            display: inline-flex;
+            gap: 2rem;
+            will-change: transform;
         }
-        .animate-ticker:hover {
+        .ticker-wrap:hover .ticker-track {
             animation-play-state: paused;
         }
 
@@ -109,19 +118,10 @@
         </div>
     </div>
 
-    <div class="bg-accentyellow text-pureblack border-b-2 border-pureblack overflow-hidden py-1.5 font-mono text-[11px] font-bold">
-        <div class="animate-ticker flex gap-6 sm:gap-8 items-center whitespace-nowrap px-4">
-            <span class="flex items-center gap-1">🟢 XAUUSD: <span id="ticker-xau" class="font-black">4,277.00</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
-            <span>&bull;</span>
-            <span class="flex items-center gap-1">🟢 EURUSD: <span id="ticker-eur" class="font-black">1.1398</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
-            <span>&bull;</span>
-            <span class="flex items-center gap-1">🟢 GBPUSD: <span id="ticker-gbp" class="font-black">1.3254</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
-            <span>&bull;</span>
-            <span class="flex items-center gap-1">🟢 USDJPY: <span id="ticker-jpy" class="font-black">143.45</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
-            <span>&bull;</span>
-            <span class="flex items-center gap-1">🟢 XAUUSD: <span class="font-black">4,277.00</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
-            <span>&bull;</span>
-            <span class="flex items-center gap-1">🟢 EURUSD: <span class="font-black">1.1398</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+    <!-- Advanced Smooth Infinite Ticker -->
+    <div class="ticker-wrap">
+        <div id="advanced-ticker-track" class="ticker-track">
+            <!-- Dynamically populated via JS for seamless infinite loop wrapper -->
         </div>
     </div>
 
@@ -726,6 +726,37 @@
                     });
                 }
             };
+
+            // Setup Smooth Infinite Ticker Animation via RequestAnimationFrame
+            const tickerTrack = document.getElementById('advanced-ticker-track');
+            function buildTickerContent() {
+                const itemsHTML = `
+                    <span class="flex items-center gap-1">🟢 XAUUSD: <span id="ticker-xau" class="font-black">${MarketStore.prices['XAUUSD'].toFixed(2)}</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+                    <span>&bull;</span>
+                    <span class="flex items-center gap-1">🟢 EURUSD: <span id="ticker-eur" class="font-black">${MarketStore.prices['EURUSD'].toFixed(4)}</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+                    <span>&bull;</span>
+                    <span class="flex items-center gap-1">🟢 GBPUSD: <span id="ticker-gbp" class="font-black">${MarketStore.prices['GBPUSD'].toFixed(4)}</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+                    <span>&bull;</span>
+                    <span class="flex items-center gap-1">🟢 USDJPY: <span id="ticker-jpy" class="font-black">${MarketStore.prices['USDJPY'].toFixed(2)}</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+                    <span>&bull;</span>
+                `;
+                // Duplicate content for smooth looping seamless transition
+                tickerTrack.innerHTML = itemsHTML + itemsHTML + itemsHTML + itemsHTML;
+            }
+            buildTickerContent();
+
+            let tickerPos = 0;
+            const tickerSpeed = 0.8; // Smooth pixel shift per frame
+            function animateTickerLoop() {
+                tickerPos += tickerSpeed;
+                const halfWidth = tickerTrack.scrollWidth / 2;
+                if (tickerPos >= halfWidth) {
+                    tickerPos = 0; // Seamless reset trigger with zero layout stutter
+                }
+                tickerTrack.style.transform = `translate3d(-${tickerPos}px, 0, 0)`;
+                requestAnimationFrame(animateTickerLoop);
+            }
+            requestAnimationFrame(animateTickerLoop);
 
             async function fetchLiveMarketRates() {
                 try {
