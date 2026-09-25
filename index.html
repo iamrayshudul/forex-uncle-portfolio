@@ -589,11 +589,15 @@
             const email = localStorage.getItem('fu_admin_email') || 'acceptableshawon+fu@gmail.com';
             const whatsapp = localStorage.getItem('fu_admin_whatsapp') || '8801795186749';
             
-            const emailLink = document.getElementById('btn-email-link');
-            if(emailLink) emailLink.href = `mailto:${email}?subject=Portfolio%20Inquiry`;
+            // Update all mailto links across the page automatically
+            document.querySelectorAll('a[href^="mailto:"]').forEach(emailLink => {
+                emailLink.href = `mailto:${email}?subject=Portfolio%20Inquiry`;
+            });
 
-            const waLink = document.getElementById('btn-whatsapp-link');
-            if(waLink) waLink.href = `https://wa.me/${whatsapp}?text=Hi%20Forex%20Uncle,%20I%20want%20to%20discuss%20collaboration.`;
+            // Update all WhatsApp links across the page automatically
+            document.querySelectorAll('a[href*="wa.me"]').forEach(waLink => {
+                waLink.href = `https://wa.me/${whatsapp}?text=Hi%20Forex%20Uncle,%20I%20want%20to%20discuss%20collaboration.`;
+            });
         }
 
         applyContactInfo();
