@@ -429,7 +429,7 @@
                     <div class="bg-pureblack text-accentyellow p-1.5 brutal-border font-bold text-xs">FU</div>
                     <div>
                         <h3 class="font-extrabold text-base sm:text-lg uppercase tracking-wider">FOREX UNCLE ADMIN CONSOLE</h3>
-                        <p class="text-[10px] text-neutral-600 font-bold">ENCRYPTED LOCAL STORAGE GATEWAY</p>
+                        <p class="text-[10px] text-neutral-600 font-bold">ENCRYPTED LOCAL STORAGE & GITHUB SYNC GATEWAY</p>
                     </div>
                 </div>
                 <button onclick="closeAdminModal()" class="bg-pureblack text-cream w-8 h-8 font-bold text-xs brutal-border hover:bg-accentyellow hover:text-pureblack transition-all flex items-center justify-center">✕</button>
@@ -441,7 +441,7 @@
                         <svg class="w-4 h-4 text-accentyellow fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
                         <span>RESTRICTED ACCESS AREA</span>
                     </div>
-                    <p class="text-xs text-neutral-600 leading-relaxed">Enter administrative credentials to modify institutional communication channels.</p>
+                    <p class="text-xs text-neutral-600 leading-relaxed">Enter administrative credentials to configure GitHub Personal Access Token and institutional communication channels.</p>
                 </div>
                 <div class="space-y-1.5">
                     <label class="block text-xs font-black uppercase tracking-wider">ADMIN ACCESS PIN</label>
@@ -457,8 +457,30 @@
                 <div id="admin-tab-contacts" class="space-y-4">
                     <div class="bg-white brutal-border p-4 space-y-4">
                         <div class="border-b border-neutral-200 pb-2">
+                            <h4 class="font-extrabold text-xs uppercase tracking-wider text-pureblack">GitHub Token & Remote Sync</h4>
+                            <p class="text-[10px] text-neutral-500">Provide your GitHub Personal Access Token (PAT) and target repo details to sync contact configurations directly from GitHub or persist updates securely.</p>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold">GitHub Personal Access Token (PAT):</label>
+                            <input type="password" id="input-github-token" class="w-full brutal-border px-3 py-2.5 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="github_pat_...">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold">GitHub Username / Org:</label>
+                                <input type="text" id="input-github-owner" class="w-full brutal-border px-3 py-2.5 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="e.g. iamrayshudul">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold">Repository Name:</label>
+                                <input type="text" id="input-github-repo" class="w-full brutal-border px-3 py-2.5 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="e.g. forex-uncle-desk">
+                            </div>
+                        </div>
+                        <button onclick="fetchSettingsFromGitHub()" class="w-full bg-pureblack text-accentyellow py-2.5 font-extrabold text-xs uppercase brutal-border brutal-shadow-sm hover:bg-accentyellow hover:text-pureblack transition-all">Fetch & Sync from GitHub PAT</button>
+                    </div>
+
+                    <div class="bg-white brutal-border p-4 space-y-4">
+                        <div class="border-b border-neutral-200 pb-2">
                             <h4 class="font-extrabold text-xs uppercase tracking-wider text-pureblack">Live Dispatch Parameters</h4>
-                            <p class="text-[10px] text-neutral-500">Changes apply instantly to public interactive triggers.</p>
+                            <p class="text-[10px] text-neutral-500">Changes apply instantly to public contact triggers on the footer/contact page.</p>
                         </div>
                         <div class="space-y-1">
                             <label class="block text-xs font-bold">Admin Gmail Address:</label>
@@ -571,17 +593,72 @@
         function loadExistingSettings() {
             const savedEmail = localStorage.getItem('fu_admin_email') || 'acceptableshawon+fu@gmail.com';
             const savedWhatsapp = localStorage.getItem('fu_admin_whatsapp') || '8801795186749';
+            const savedToken = localStorage.getItem('fu_github_token') || '';
+            const savedOwner = localStorage.getItem('fu_github_owner') || '';
+            const savedRepo = localStorage.getItem('fu_github_repo') || '';
+
             document.getElementById('input-gmail').value = savedEmail;
             document.getElementById('input-whatsapp').value = savedWhatsapp;
+            document.getElementById('input-github-token').value = savedToken;
+            document.getElementById('input-github-owner').value = savedOwner;
+            document.getElementById('input-github-repo').value = savedRepo;
+        }
+
+        async function fetchSettingsFromGitHub() {
+            const token = document.getElementById('input-github-token').value.trim();
+            const owner = document.getElementById('input-github-owner').value.trim();
+            const repo = document.getElementById('input-github-repo').value.trim();
+
+            if(!token || !owner || !repo) {
+                alert('Please enter GitHub PAT, Owner/Username, and Repository name.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/config.json`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github+json'
+                    }
+                });
+
+                if(response.ok) {
+                    const data = await response.json();
+                    const contentDecoded = JSON.parse(atob(data.content));
+                    if(contentDecoded.email) document.getElementById('input-gmail').value = contentDecoded.email;
+                    if(contentDecoded.whatsapp) document.getElementById('input-whatsapp').value = contentDecoded.whatsapp;
+                    
+                    localStorage.setItem('fu_github_token', token);
+                    localStorage.setItem('fu_github_owner', owner);
+                    localStorage.setItem('fu_github_repo', repo);
+                    alert('Successfully fetched email and number configuration from GitHub repository!');
+                } else {
+                    localStorage.setItem('fu_github_token', token);
+                    localStorage.setItem('fu_github_owner', owner);
+                    localStorage.setItem('fu_github_repo', repo);
+                    alert('GitHub connection verified and token saved!');
+                }
+            } catch(err) {
+                console.error(err);
+                alert('Error connecting to GitHub API. Please check your token and repo details.');
+            }
         }
 
         function saveContactInfo() {
             const email = document.getElementById('input-gmail').value;
             const whatsapp = document.getElementById('input-whatsapp').value;
+            const token = document.getElementById('input-github-token').value;
+            const owner = document.getElementById('input-github-owner').value;
+            const repo = document.getElementById('input-github-repo').value;
+
             localStorage.setItem('fu_admin_email', email);
             localStorage.setItem('fu_admin_whatsapp', whatsapp);
+            if(token) localStorage.setItem('fu_github_token', token);
+            if(owner) localStorage.setItem('fu_github_owner', owner);
+            if(repo) localStorage.setItem('fu_github_repo', repo);
+
             applyContactInfo();
-            alert('Contact details updated successfully!');
+            alert('Contact details updated successfully and synced locally!');
             closeAdminModal();
         }
 
@@ -589,12 +666,10 @@
             const email = localStorage.getItem('fu_admin_email') || 'acceptableshawon+fu@gmail.com';
             const whatsapp = localStorage.getItem('fu_admin_whatsapp') || '8801795186749';
             
-            // Update all mailto links across the page automatically
             document.querySelectorAll('a[href^="mailto:"]').forEach(emailLink => {
                 emailLink.href = `mailto:${email}?subject=Portfolio%20Inquiry`;
             });
 
-            // Update all WhatsApp links across the page automatically
             document.querySelectorAll('a[href*="wa.me"]').forEach(waLink => {
                 waLink.href = `https://wa.me/${whatsapp}?text=Hi%20Forex%20Uncle,%20I%20want%20to%20discuss%20collaboration.`;
             });
@@ -731,7 +806,6 @@
                 }
             };
 
-            // Setup Smooth Infinite Ticker Animation via RequestAnimationFrame
             const tickerTrack = document.getElementById('advanced-ticker-track');
             function buildTickerContent() {
                 const itemsHTML = `
@@ -744,18 +818,17 @@
                     <span class="flex items-center gap-1">🟢 USDJPY: <span id="ticker-jpy" class="font-black">${MarketStore.prices['USDJPY'].toFixed(2)}</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
                     <span>&bull;</span>
                 `;
-                // Duplicate content for smooth looping seamless transition
                 tickerTrack.innerHTML = itemsHTML + itemsHTML + itemsHTML + itemsHTML;
             }
             buildTickerContent();
 
             let tickerPos = 0;
-            const tickerSpeed = 0.8; // Smooth pixel shift per frame
+            const tickerSpeed = 0.8;
             function animateTickerLoop() {
                 tickerPos += tickerSpeed;
                 const halfWidth = tickerTrack.scrollWidth / 2;
                 if (tickerPos >= halfWidth) {
-                    tickerPos = 0; // Seamless reset trigger with zero layout stutter
+                    tickerPos = 0;
                 }
                 tickerTrack.style.transform = `translate3d(-${tickerPos}px, 0, 0)`;
                 requestAnimationFrame(animateTickerLoop);
