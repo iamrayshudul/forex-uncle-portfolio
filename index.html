@@ -80,6 +80,19 @@
         .advanced-hover:hover::before { transform: scaleX(1); transform-origin: left; }
         .advanced-hover:hover { transform: translateY(-4px) translateX(-2px); box-shadow: 4px 4px 0px #000000; }
 
+        .nav-link-anim {
+            position: relative;
+            padding: 4px 8px;
+            border: 2px solid transparent;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-link-anim:hover {
+            background-color: #ffde00;
+            border-color: #000000;
+            box-shadow: 2px 2px 0px #000000;
+            transform: translateY(-2px);
+        }
+
         @keyframes ticker {
             0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(-50%, 0, 0); }
@@ -99,24 +112,26 @@
     <div id="cursor-dot" class="hidden lg:block"></div>
     <div id="cursor-ring" class="hidden lg:block"></div>
 
-    <div class="bg-pureblack text-cream text-[9px] sm:text-xs font-mono py-2 px-2 sm:px-3 text-center tracking-wider border-b-2 border-pureblack flex flex-wrap justify-between items-center gap-1.5 sm:gap-4 max-w-7xl mx-auto">
-        <div class="flex items-center gap-2">
-            <span>FOREX_UNCLE_SRV: REAL-US09</span>
-            <span class="hidden sm:inline">&bull;</span>
-            <span class="truncate max-w-[200px] sm:max-w-none">FEED: <span id="socket-status" class="text-accentyellow">LIVE API POLLING & TICK STREAM</span></span>
+    <!-- Minimalist Clean Top Telemetry Bar -->
+    <div class="bg-pureblack text-cream text-[10px] font-mono py-1.5 px-3 border-b border-neutral-800 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="flex items-center gap-2 overflow-hidden whitespace-nowrap">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            <span class="text-neutral-400">SRV:</span> <span class="text-white">US-09</span>
+            <span class="text-neutral-600 hidden sm:inline">&bull;</span>
+            <span class="text-neutral-400 hidden sm:inline">LATENCY:</span> <span class="text-accentyellow hidden sm:inline">11.4ms</span>
         </div>
         <div class="flex items-center gap-3">
-            <span>LATENCY: <span class="text-accentyellow">11.4ms</span></span>
-            <button onclick="openAdminModal()" class="bg-accentyellow text-pureblack px-2.5 py-1 font-bold text-[10px] brutal-border hover:bg-white transition-all flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                ADMIN TERMINAL
+            <span class="text-neutral-400 hidden md:inline">STREAM: <span class="text-accentyellow">LIVE API</span></span>
+            <button onclick="openAdminModal()" class="text-accentyellow hover:text-white transition-colors flex items-center gap-1 font-bold">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                ADMIN
             </button>
         </div>
     </div>
 
-    <div class="bg-accentyellow text-pureblack border-b-2 border-pureblack overflow-hidden py-1.5 sm:py-2 font-mono text-[11px] sm:text-xs font-bold">
+    <div class="bg-accentyellow text-pureblack border-b-2 border-pureblack overflow-hidden py-1.5 font-mono text-[11px] font-bold">
         <div class="animate-ticker flex gap-6 sm:gap-8 items-center whitespace-nowrap px-4">
-            <span class="flex items-center gap-1">🟢 FOREX UNCLE XAUUSD: <span id="ticker-xau" class="font-black">4,277.00</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
+            <span class="flex items-center gap-1">🟢 XAUUSD: <span id="ticker-xau" class="font-black">4,277.00</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
             <span>&bull;</span>
             <span class="flex items-center gap-1">🟢 EURUSD: <span id="ticker-eur" class="font-black">1.1398</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
             <span>&bull;</span>
@@ -127,36 +142,31 @@
             <span class="flex items-center gap-1">🟢 XAUUSD: <span class="font-black">4,277.00</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
             <span>&bull;</span>
             <span class="flex items-center gap-1">🟢 EURUSD: <span class="font-black">1.1398</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
-            <span>&bull;</span>
-            <span class="flex items-center gap-1">🟢 GBPUSD: <span class="font-black">1.3254</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
-            <span>&bull;</span>
-            <span class="flex items-center gap-1">🟢 USDJPY: <span class="font-black">143.45</span> <span class="text-green-700 font-bold">(LIVE)</span></span>
         </div>
     </div>
 
+    <!-- Elegant Minimalist Header -->
     <header class="border-b-2 border-pureblack bg-cream sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-            <a href="#" class="flex items-center gap-2 sm:gap-3 group">
-                <div class="bg-accentyellow brutal-border px-2 sm:px-3 py-1 font-mono font-bold text-base sm:text-lg brutal-shadow-sm">FU</div>
-                <span class="font-bold text-xl sm:text-2xl tracking-tighter uppercase">Forex Uncle &bull; Shawon</span>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="bg-pureblack text-accentyellow px-2 py-0.5 font-mono font-bold text-xs">FU</div>
+                <span class="font-bold text-sm sm:text-base tracking-tight uppercase">Forex Uncle &bull; Shawon</span>
             </a>
-            <nav class="hidden md:flex items-center gap-3 lg:gap-4 font-mono text-xs sm:text-sm font-semibold">
-                <a href="#ledger" class="px-3 py-2 brutal-border bg-white advanced-hover">LIVE LEDGER</a>
-                <a href="#chart-section" class="px-3 py-2 brutal-border bg-white advanced-hover">LIVE CHART</a>
-                <a href="#confluence" class="px-3 py-2 brutal-border bg-white advanced-hover">TECHNICAL MATRIX</a>
-                <a href="#certificates-section" id="nav-certificates-link" class="px-3 py-2 brutal-border bg-white advanced-hover hidden">CERTIFICATES</a>
-                <a href="#hire" class="bg-accentyellow brutal-border px-4 py-2 brutal-shadow-sm hover:bg-pureblack hover:text-cream transition-all">HIRE ME</a>
+            <nav class="hidden md:flex items-center gap-3 font-mono text-xs font-semibold">
+                <a href="#ledger" class="nav-link-anim">Ledger</a>
+                <a href="#chart-section" class="nav-link-anim">Charts</a>
+                <a href="#confluence" class="nav-link-anim">Matrix</a>
+                <a href="#hire" class="bg-pureblack text-cream px-3 py-1.5 hover:bg-accentyellow hover:text-pureblack transition-all brutal-border">Hire Me</a>
             </nav>
-            <button id="menu-btn" class="md:hidden bg-accentyellow brutal-border p-2 brutal-shadow-sm focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <button id="menu-btn" class="md:hidden bg-pureblack text-accentyellow p-1.5 focus:outline-none">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-cream border-b-2 border-pureblack px-4 pt-3 pb-6 space-y-3 font-mono text-sm font-semibold">
-            <a href="#ledger" class="block px-3 py-2 brutal-border bg-white">LIVE LEDGER</a>
-            <a href="#chart-section" class="block px-3 py-2 brutal-border bg-white">LIVE CHART</a>
-            <a href="#confluence" class="block px-3 py-2 brutal-border bg-white">TECHNICAL MATRIX</a>
-            <a href="#certificates-section" id="mobile-nav-certificates" class="block px-3 py-2 brutal-border bg-white hidden">CERTIFICATES</a>
-            <a href="#hire" class="block px-3 py-2 brutal-border bg-accentyellow text-center brutal-shadow-sm">HIRE ME</a>
+        <div id="mobile-menu" class="hidden md:hidden bg-cream border-b-2 border-pureblack px-4 pt-3 pb-5 space-y-2 font-mono text-xs font-semibold">
+            <a href="#ledger" class="block px-3 py-2 hover:bg-accentyellow transition-colors">Live Ledger</a>
+            <a href="#chart-section" class="block px-3 py-2 hover:bg-accentyellow transition-colors">Interactive Chart</a>
+            <a href="#confluence" class="block px-3 py-2 hover:bg-accentyellow transition-colors">Technical Matrix</a>
+            <a href="#hire" class="block px-3 py-2 bg-pureblack text-cream text-center mt-2">Hire Me</a>
         </div>
     </header>
 
@@ -251,7 +261,7 @@
                     <div class="text-xs font-bold text-neutral-500 uppercase">Monthly Growth Progression</div>
                     <div class="text-2xl font-black">+8.45%</div>
                     <div class="w-full bg-cream h-2.5 brutal-border overflow-hidden p-0.5">
-                        <div class="bg-pureblack h-full w-[84.5%]" ></div>
+                        <div class="bg-pureblack h-full w-[84.5%]"></div>
                     </div>
                     <p class="text-[11px] text-neutral-600">Calculated on compound equity return benchmark.</p>
                 </div>
@@ -385,16 +395,6 @@
             </div>
         </section>
 
-        <section id="certificates-section" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 scroll-mt-24 hidden">
-            <div class="mb-6 sm:mb-8 flex justify-between items-end">
-                <div>
-                    <span class="font-mono text-xs font-bold uppercase bg-pureblack text-cream px-3 py-1 brutal-shadow-sm">Credentials</span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold uppercase mt-3">Verified Certificates</h2>
-                </div>
-            </div>
-            <div id="certificates-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-mono"></div>
-        </section>
-
         <section id="hire" class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 scroll-mt-24">
             <div class="bg-accentyellow brutal-border brutal-shadow p-6 sm:p-8 text-center font-mono">
                 <h3 class="text-2xl sm:text-3xl font-extrabold uppercase mb-4">Connect with Forex Uncle</h3>
@@ -418,6 +418,7 @@
         </section>
     </main>
 
+    <!-- Admin Modal (Communication Only) -->
     <div id="admin-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[99999] hidden flex items-center justify-center p-4 font-mono">
         <div class="bg-cream brutal-border brutal-shadow max-w-xl w-full p-6 sm:p-8 space-y-6 relative max-h-[92vh] overflow-y-auto">
             
@@ -438,7 +439,7 @@
                         <svg class="w-4 h-4 text-accentyellow fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
                         <span>RESTRICTED ACCESS AREA</span>
                     </div>
-                    <p class="text-xs text-neutral-600 leading-relaxed">Enter administrative credentials to modify institutional communication channels and upload private audit credentials.</p>
+                    <p class="text-xs text-neutral-600 leading-relaxed">Enter administrative credentials to modify institutional communication channels.</p>
                 </div>
                 <div class="space-y-1.5">
                     <label class="block text-xs font-black uppercase tracking-wider">ADMIN ACCESS PIN</label>
@@ -451,12 +452,6 @@
             </div>
 
             <div id="admin-dashboard-view" class="space-y-6 hidden">
-                
-                <div class="grid grid-cols-2 gap-2 p-1 bg-white brutal-border">
-                    <button onclick="switchAdminTab('contacts')" id="tab-btn-contacts" class="py-2 text-xs font-extrabold uppercase bg-pureblack text-cream transition-all">Communication</button>
-                    <button onclick="switchAdminTab('certs')" id="tab-btn-certs" class="py-2 text-xs font-extrabold uppercase text-neutral-700 hover:bg-neutral-100 transition-all">Credentials (Hidden)</button>
-                </div>
-
                 <div id="admin-tab-contacts" class="space-y-4">
                     <div class="bg-white brutal-border p-4 space-y-4">
                         <div class="border-b border-neutral-200 pb-2">
@@ -474,65 +469,6 @@
                         <button onclick="saveContactInfo()" class="w-full bg-accentyellow text-pureblack py-2.5 font-extrabold text-xs uppercase brutal-border brutal-shadow-sm hover:bg-pureblack hover:text-cream transition-all">Save & Broadcast Changes</button>
                     </div>
                 </div>
-
-                <div id="admin-tab-certs" class="space-y-4 hidden">
-                    <div class="bg-white brutal-border p-4 space-y-4">
-                        <div class="border-b border-neutral-200 pb-2 flex justify-between items-center">
-                            <div>
-                                <h4 class="font-extrabold text-xs uppercase tracking-wider text-pureblack" id="cert-form-heading">Upload Private Document</h4>
-                                <p class="text-[10px] text-neutral-500">Files remain hidden until published securely.</p>
-                            </div>
-                            <span class="text-[9px] bg-neutral-900 text-accentyellow px-2 py-0.5 font-bold">SECURE VAULT</span>
-                        </div>
-                        <input type="hidden" id="edit-cert-index" value="-1">
-                        
-                        <div class="space-y-1">
-                            <label class="block text-xs font-bold">Document Title:</label>
-                            <input type="text" id="cert-title" class="w-full brutal-border px-3 py-2 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="e.g. Institutional Risk Audit">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-xs font-bold">Issuing Institution / Authority:</label>
-                            <input type="text" id="cert-issuer" class="w-full brutal-border px-3 py-2 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="e.g. Global Prop Firm Council">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-xs font-bold">Verification Link (Optional):</label>
-                            <input type="url" id="cert-link" class="w-full brutal-border px-3 py-2 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="e.g. https://verify.example.com/id123">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-xs font-bold">Select Image File:</label>
-                            <input type="file" id="cert-file" accept="image/*" class="w-full brutal-border px-3 py-2 bg-cream text-xs file:mr-3 file:py-1 file:px-3 file:brutal-border file:border-black file:bg-accentyellow file:font-bold file:text-xs">
-                        </div>
-
-                        <div class="flex gap-2 pt-1">
-                            <button onclick="saveOrUpdateCertificate()" id="cert-submit-btn" class="flex-1 bg-pureblack text-cream py-2.5 font-bold text-xs uppercase brutal-border brutal-shadow-sm hover:bg-accentyellow hover:text-pureblack transition-all">Publish Credential</button>
-                            <button onclick="resetCertForm()" id="cert-cancel-edit-btn" class="hidden bg-neutral-300 text-pureblack px-3 py-2 font-bold text-xs brutal-border">Cancel</button>
-                        </div>
-                    </div>
-
-                    <div class="bg-white brutal-border p-4 space-y-2">
-                        <h4 class="font-bold text-xs uppercase text-neutral-700">Active Published Credentials</h4>
-                        <div id="admin-certs-list" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div id="cert-zoom-modal" class="fixed inset-0 bg-black/95 z-[999999] hidden flex items-center justify-center p-4">
-        <div class="relative max-w-4xl w-full bg-cream brutal-border p-4 space-y-3 font-mono">
-            <div class="flex justify-between items-center border-b-2 border-pureblack pb-2">
-                <h4 id="zoom-cert-title" class="font-extrabold uppercase text-sm">Certificate View</h4>
-                <div class="flex gap-2 items-center">
-                    <a id="zoom-external-link" href="#" target="_blank" class="hidden bg-accentyellow text-pureblack px-3 py-1 font-bold text-xs brutal-border flex items-center gap-1">
-                        <span>Verify Online</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    </a>
-                    <button onclick="closeCertZoom()" class="bg-pureblack text-cream px-2.5 py-1 font-bold text-xs">X</button>
-                </div>
-            </div>
-            <div class="flex items-center justify-center overflow-auto max-h-[80vh] p-2 bg-white brutal-border">
-                <img id="zoom-cert-img" src="" class="max-w-full max-h-[72vh] object-contain">
             </div>
         </div>
     </div>
@@ -551,7 +487,6 @@
                 <a href="#ledger" class="hover:text-accentyellow transition-colors">Ledger</a>
                 <a href="#chart-section" class="hover:text-accentyellow transition-colors">Charts</a>
                 <a href="#confluence" class="hover:text-accentyellow transition-colors">Matrix</a>
-                <a href="#certificates-section" id="footer-cert-link" class="hover:text-accentyellow transition-colors hidden">Certificates</a>
                 <a href="#hire" class="hover:text-accentyellow transition-colors">Contact</a>
             </div>
 
@@ -591,28 +526,8 @@
                 document.getElementById('admin-login-view').classList.add('hidden');
                 document.getElementById('admin-dashboard-view').classList.remove('hidden');
                 loadExistingSettings();
-                renderAdminCertificatesList();
             } else {
                 alert('Invalid Admin PIN!');
-            }
-        }
-
-        function switchAdminTab(tabName) {
-            const btnContacts = document.getElementById('tab-btn-contacts');
-            const btnCerts = document.getElementById('tab-btn-certs');
-            const tabContacts = document.getElementById('admin-tab-contacts');
-            const tabCerts = document.getElementById('admin-tab-certs');
-
-            if(tabName === 'contacts') {
-                btnContacts.className = "py-2 text-xs font-extrabold uppercase bg-pureblack text-cream transition-all";
-                btnCerts.className = "py-2 text-xs font-extrabold uppercase text-neutral-700 hover:bg-neutral-100 transition-all";
-                tabContacts.classList.remove('hidden');
-                tabCerts.classList.add('hidden');
-            } else {
-                btnCerts.className = "py-2 text-xs font-extrabold uppercase bg-pureblack text-cream transition-all";
-                btnContacts.className = "py-2 text-xs font-extrabold uppercase text-neutral-700 hover:bg-neutral-100 transition-all";
-                tabCerts.classList.remove('hidden');
-                tabContacts.classList.add('hidden');
             }
         }
 
@@ -644,194 +559,7 @@
             if(waLink) waLink.href = `https://wa.me/${whatsapp}?text=Hi%20Forex%20Uncle,%20I%20want%20to%20discuss%20collaboration.`;
         }
 
-        function saveOrUpdateCertificate() {
-            const title = document.getElementById('cert-title').value;
-            const issuer = document.getElementById('cert-issuer').value;
-            const link = document.getElementById('cert-link').value;
-            const fileInput = document.getElementById('cert-file');
-            const editIndex = parseInt(document.getElementById('edit-cert-index').value);
-
-            if(!title || !issuer) {
-                alert('Please provide title and issuer!');
-                return;
-            }
-
-            let certs = JSON.parse(localStorage.getItem('fu_admin_certs') || '[]');
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64Image = e.target.result;
-                    processCertSave(certs, title, issuer, link, base64Image, editIndex);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                let existingImage = '';
-                if(editIndex >= 0 && certs[editIndex]) {
-                    existingImage = certs[editIndex].image || '';
-                }
-                processCertSave(certs, title, issuer, link, existingImage, editIndex);
-            }
-        }
-
-        function processCertSave(certs, title, issuer, link, image, editIndex) {
-            if(editIndex >= 0) {
-                certs[editIndex] = { title, issuer, link, image };
-                alert('Certificate updated successfully!');
-            } else {
-                certs.push({ title, issuer, link, image });
-                alert('Certificate uploaded successfully!');
-            }
-
-            localStorage.setItem('fu_admin_certs', JSON.stringify(certs));
-            resetCertForm();
-            renderCertificates();
-            renderAdminCertificatesList();
-        }
-
-        function resetCertForm() {
-            document.getElementById('cert-title').value = '';
-            document.getElementById('cert-issuer').value = '';
-            document.getElementById('cert-link').value = '';
-            document.getElementById('cert-file').value = '';
-            document.getElementById('edit-cert-index').value = '-1';
-            document.getElementById('cert-form-heading').innerText = 'Upload Private Document';
-            document.getElementById('cert-submit-btn').innerText = 'Publish Credential';
-            document.getElementById('cert-cancel-edit-btn').classList.add('hidden');
-        }
-
-        function editCertificate(index) {
-            let certs = JSON.parse(localStorage.getItem('fu_admin_certs') || '[]');
-            const cert = certs[index];
-            if(!cert) return;
-
-            document.getElementById('cert-title').value = cert.title;
-            document.getElementById('cert-issuer').value = cert.issuer;
-            document.getElementById('cert-link').value = cert.link || '';
-            document.getElementById('edit-cert-index').value = index;
-            document.getElementById('cert-form-heading').innerText = `Editing Credential #${index + 1}`;
-            document.getElementById('cert-submit-btn').innerText = 'Update Credential';
-            document.getElementById('cert-cancel-edit-btn').classList.remove('hidden');
-        }
-
-        function deleteCertificate(index) {
-            if(confirm('Are you sure you want to delete this credential?')) {
-                let certs = JSON.parse(localStorage.getItem('fu_admin_certs') || '[]');
-                certs.splice(index, 1);
-                localStorage.setItem('fu_admin_certs', JSON.stringify(certs));
-                renderCertificates();
-                renderAdminCertificatesList();
-                resetCertForm();
-                alert('Credential deleted successfully!');
-            }
-        }
-
-        function renderAdminCertificatesList() {
-            const listContainer = document.getElementById('admin-certs-list');
-            if(!listContainer) return;
-
-            let certs = JSON.parse(localStorage.getItem('fu_admin_certs') || '[]');
-            if(certs.length === 0) {
-                listContainer.innerHTML = '<p class="text-xs text-neutral-500 italic">No custom credentials uploaded yet.</p>';
-                return;
-            }
-
-            let html = '';
-            certs.forEach((c, idx) => {
-                html += `
-                    <div class="flex justify-between items-center bg-cream brutal-border p-2 text-xs">
-                        <div class="truncate max-w-[190px]">
-                            <strong class="block truncate">${c.title}</strong>
-                            <span class="text-[10px] text-neutral-600">${c.issuer}</span>
-                        </div>
-                        <div class="flex gap-1.5">
-                            <button onclick="editCertificate(${idx})" class="bg-accentyellow px-2 py-1 font-bold brutal-border">Edit</button>
-                            <button onclick="deleteCertificate(${idx})" class="bg-red-600 text-white px-2 py-1 font-bold brutal-border">Del</button>
-                        </div>
-                    </div>
-                `;
-            });
-            listContainer.innerHTML = html;
-        }
-
-        function renderCertificates() {
-            const grid = document.getElementById('certificates-grid');
-            const section = document.getElementById('certificates-section');
-            const navLink = document.getElementById('nav-certificates-link');
-            const mobileNavLink = document.getElementById('mobile-nav-certificates');
-            const footerCertLink = document.getElementById('footer-cert-link');
-            
-            if(!grid || !section) return;
-            
-            let certs = JSON.parse(localStorage.getItem('fu_admin_certs') || '[]');
-            
-            if(certs.length === 0) {
-                section.classList.add('hidden');
-                if(navLink) navLink.classList.add('hidden');
-                if(mobileNavLink) mobileNavLink.classList.add('hidden');
-                if(footerCertLink) footerCertLink.classList.add('hidden');
-                grid.innerHTML = '';
-                return;
-            }
-
-            section.classList.remove('hidden');
-            if(navLink) navLink.classList.remove('hidden');
-            if(mobileNavLink) mobileNavLink.classList.remove('hidden');
-            if(footerCertLink) footerCertLink.classList.remove('hidden');
-
-            let html = '';
-            certs.forEach((c) => {
-                const imgTag = c.image ? `<img src="${c.image}" class="w-full h-full object-cover">` : '<span class="text-xs text-neutral-500 font-bold">[VERIFIED DOCUMENT]</span>';
-                const linkBadge = c.link ? `<span class="inline-flex items-center gap-1 text-[10px] bg-accentyellow px-2 py-0.5 font-bold brutal-border mt-1">Has Verification Link ↗</span>` : '';
-                
-                html += `
-                    <div class="bg-white brutal-border brutal-shadow p-4 space-y-3 cursor-pointer advanced-hover" onclick="zoomCert('${c.title.replace(/'/g, "\\'")}', '${c.issuer.replace(/'/g, "\\'")}', '${c.link || ''}', '${c.image || ''}')">
-                        <div class="h-40 bg-neutral-100 brutal-border flex items-center justify-center overflow-hidden">
-                            ${imgTag}
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-sm">${c.title}</h4>
-                            <p class="text-xs text-neutral-600">${c.issuer}</p>
-                            ${linkBadge}
-                        </div>
-                    </div>
-                `;
-            });
-
-            grid.innerHTML = html;
-        }
-
-        function zoomCert(title, issuer, link, image) {
-            document.getElementById('zoom-cert-title').innerText = `${title} — (${issuer})`;
-            
-            const extLinkBtn = document.getElementById('zoom-external-link');
-            if(link && link.trim() !== '') {
-                extLinkBtn.href = link;
-                extLinkBtn.classList.remove('hidden');
-            } else {
-                extLinkBtn.href = '#';
-                extLinkBtn.classList.add('hidden');
-            }
-
-            const imgElem = document.getElementById('zoom-cert-img');
-            if(image) {
-                imgElem.src = image;
-                imgElem.classList.remove('hidden');
-            } else {
-                imgElem.src = '';
-                imgElem.classList.add('hidden');
-            }
-            document.getElementById('cert-zoom-modal').classList.remove('hidden');
-            document.body.classList.add('modal-open');
-        }
-
-        function closeCertZoom() {
-            document.getElementById('cert-zoom-modal').classList.add('hidden');
-            document.body.classList.remove('modal-open');
-        }
-
         applyContactInfo();
-        renderCertificates();
 
         (function() {
             function updateFooterClock() {
@@ -1114,11 +842,10 @@
                         let decimals = t.symbol === 'XAUUSD' ? 2 : (t.symbol === 'USDJPY' ? 2 : 4);
                         row.querySelector('.current-col').innerText = currentVal.toFixed(decimals);
                         
-                        const sltpElem = row.querySelector('.sltp-col');
                         if (t.status === 'CLOSED') {
-                            sltpElem.innerHTML = `<span class="font-bold ${t.profit >= 0 ? 'text-green-700' : 'text-red-700'}">${t.outcome}</span>`;
+                            row.querySelector('.sltp-col').innerHTML = `<span class="font-bold ${t.profit >= 0 ? 'text-green-700' : 'text-red-700'}">${t.outcome}</span>`;
                         } else {
-                            sltpElem.innerHTML = `SL: -$${Math.abs(t.stopLoss)} | TP: +$${t.targetProfit}`;
+                            row.querySelector('.sltp-col').innerHTML = `SL: -$${Math.abs(t.stopLoss)} | TP: +$${t.targetProfit}`;
                         }
 
                         row.querySelector('.status-col').innerHTML = t.status === 'RUNNING' 
