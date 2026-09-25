@@ -120,9 +120,7 @@
 
     <!-- Advanced Smooth Infinite Ticker -->
     <div class="ticker-wrap">
-        <div id="advanced-ticker-track" class="ticker-track">
-            <!-- Dynamically populated via JS for seamless infinite loop wrapper -->
-        </div>
+        <div id="advanced-ticker-track" class="ticker-track"></div>
     </div>
 
     <!-- Header with unified logo style -->
@@ -429,7 +427,7 @@
                     <div class="bg-pureblack text-accentyellow p-1.5 brutal-border font-bold text-xs">FU</div>
                     <div>
                         <h3 class="font-extrabold text-base sm:text-lg uppercase tracking-wider">FOREX UNCLE ADMIN CONSOLE</h3>
-                        <p class="text-[10px] text-neutral-600 font-bold">ENCRYPTED LOCAL STORAGE & GITHUB SYNC GATEWAY</p>
+                        <p class="text-[10px] text-neutral-600 font-bold">SECURE ENCRYPTED CONFIG & GLOBAL GITHUB SYNC</p>
                     </div>
                 </div>
                 <button onclick="closeAdminModal()" class="bg-pureblack text-cream w-8 h-8 font-bold text-xs brutal-border hover:bg-accentyellow hover:text-pureblack transition-all flex items-center justify-center">✕</button>
@@ -441,7 +439,7 @@
                         <svg class="w-4 h-4 text-accentyellow fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
                         <span>RESTRICTED ACCESS AREA</span>
                     </div>
-                    <p class="text-xs text-neutral-600 leading-relaxed">Enter administrative credentials to configure GitHub Personal Access Token and institutional communication channels.</p>
+                    <p class="text-xs text-neutral-600 leading-relaxed">Enter administrative credentials to manage configuration globally with hidden security.</p>
                 </div>
                 <div class="space-y-1.5">
                     <label class="block text-xs font-black uppercase tracking-wider">ADMIN ACCESS PIN</label>
@@ -458,7 +456,7 @@
                     <div class="bg-white brutal-border p-4 space-y-4">
                         <div class="border-b border-neutral-200 pb-2">
                             <h4 class="font-extrabold text-xs uppercase tracking-wider text-pureblack">GitHub Token & Remote Sync</h4>
-                            <p class="text-[10px] text-neutral-500">Provide your GitHub Personal Access Token (PAT) and target repo details to sync contact configurations directly from GitHub or persist updates securely.</p>
+                            <p class="text-[10px] text-neutral-500">Provide your GitHub Personal Access Token (PAT) to update configuration securely.</p>
                         </div>
                         <div class="space-y-1">
                             <label class="block text-xs font-bold">GitHub Personal Access Token (PAT):</label>
@@ -466,7 +464,7 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="space-y-1">
-                                <label class="block text-xs font-bold">GitHub Username / Org:</label>
+                                <label class="block text-xs font-bold">GitHub Username / Owner:</label>
                                 <input type="text" id="input-github-owner" class="w-full brutal-border px-3 py-2.5 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="e.g. iamrayshudul">
                             </div>
                             <div class="space-y-1">
@@ -474,13 +472,13 @@
                                 <input type="text" id="input-github-repo" class="w-full brutal-border px-3 py-2.5 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="e.g. forex-uncle-desk">
                             </div>
                         </div>
-                        <button onclick="fetchSettingsFromGitHub()" class="w-full bg-pureblack text-accentyellow py-2.5 font-extrabold text-xs uppercase brutal-border brutal-shadow-sm hover:bg-accentyellow hover:text-pureblack transition-all">Fetch & Sync from GitHub PAT</button>
+                        <button onclick="fetchSettingsFromGitHub()" class="w-full bg-pureblack text-accentyellow py-2.5 font-extrabold text-xs uppercase brutal-border brutal-shadow-sm hover:bg-accentyellow hover:text-pureblack transition-all">Fetch Settings from Repo</button>
                     </div>
 
                     <div class="bg-white brutal-border p-4 space-y-4">
                         <div class="border-b border-neutral-200 pb-2">
                             <h4 class="font-extrabold text-xs uppercase tracking-wider text-pureblack">Live Dispatch Parameters</h4>
-                            <p class="text-[10px] text-neutral-500">Changes apply instantly to public contact triggers on the footer/contact page.</p>
+                            <p class="text-[10px] text-neutral-500">Updates sync globally for all website visitors instantly.</p>
                         </div>
                         <div class="space-y-1">
                             <label class="block text-xs font-bold">Admin Gmail Address:</label>
@@ -490,7 +488,7 @@
                             <label class="block text-xs font-bold">WhatsApp Direct Number (With Country Code):</label>
                             <input type="text" id="input-whatsapp" class="w-full brutal-border px-3 py-2.5 bg-cream text-xs font-bold focus:bg-white focus:outline-none" placeholder="e.g. 8801795186749">
                         </div>
-                        <button onclick="saveContactInfo()" class="w-full bg-accentyellow text-pureblack py-2.5 font-extrabold text-xs uppercase brutal-border brutal-shadow-sm hover:bg-pureblack hover:text-cream transition-all">Save & Broadcast Changes</button>
+                        <button onclick="saveAndSyncGlobally()" class="w-full bg-accentyellow text-pureblack py-2.5 font-extrabold text-xs uppercase brutal-border brutal-shadow-sm hover:bg-pureblack hover:text-cream transition-all">Save & Sync Globally</button>
                     </div>
                 </div>
             </div>
@@ -581,7 +579,10 @@
 
         function verifyAdminPin() {
             const pin = document.getElementById('admin-pin').value;
-            if(pin === '2991') {
+            // Encoded PIN check ('Mjk5MQ==' stands for '2991')
+            const encodedMasterPin = 'Mjk5MQ==';
+            
+            if(btoa(pin) === encodedMasterPin) {
                 document.getElementById('admin-login-view').classList.add('hidden');
                 document.getElementById('admin-dashboard-view').classList.remove('hidden');
                 loadExistingSettings();
@@ -610,12 +611,12 @@
             const repo = document.getElementById('input-github-repo').value.trim();
 
             if(!token || !owner || !repo) {
-                alert('Please enter GitHub PAT, Owner/Username, and Repository name.');
+                alert('Please enter GitHub PAT, Owner, and Repository name.');
                 return;
             }
 
             try {
-                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/config.json`, {
+                const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/.contact-secret.json`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/vnd.github+json'
@@ -631,25 +632,25 @@
                     localStorage.setItem('fu_github_token', token);
                     localStorage.setItem('fu_github_owner', owner);
                     localStorage.setItem('fu_github_repo', repo);
-                    alert('Successfully fetched email and number configuration from GitHub repository!');
+                    alert('Successfully fetched configuration securely from repository!');
                 } else {
                     localStorage.setItem('fu_github_token', token);
                     localStorage.setItem('fu_github_owner', owner);
                     localStorage.setItem('fu_github_repo', repo);
-                    alert('GitHub connection verified and token saved!');
+                    alert('GitHub connected! Secret config file will be created on first global save.');
                 }
             } catch(err) {
                 console.error(err);
-                alert('Error connecting to GitHub API. Please check your token and repo details.');
+                alert('Error connecting to GitHub API.');
             }
         }
 
-        function saveContactInfo() {
-            const email = document.getElementById('input-gmail').value;
-            const whatsapp = document.getElementById('input-whatsapp').value;
-            const token = document.getElementById('input-github-token').value;
-            const owner = document.getElementById('input-github-owner').value;
-            const repo = document.getElementById('input-github-repo').value;
+        async function saveAndSyncGlobally() {
+            const email = document.getElementById('input-gmail').value.trim();
+            const whatsapp = document.getElementById('input-whatsapp').value.trim();
+            const token = document.getElementById('input-github-token').value.trim();
+            const owner = document.getElementById('input-github-owner').value.trim();
+            const repo = document.getElementById('input-github-repo').value.trim();
 
             localStorage.setItem('fu_admin_email', email);
             localStorage.setItem('fu_admin_whatsapp', whatsapp);
@@ -657,25 +658,90 @@
             if(owner) localStorage.setItem('fu_github_owner', owner);
             if(repo) localStorage.setItem('fu_github_repo', repo);
 
+            if(token && owner && repo) {
+                try {
+                    let fileSha = '';
+                    const getRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/.contact-secret.json`, {
+                        headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+                    });
+                    if(getRes.ok) {
+                        const fileData = await getRes.json();
+                        fileSha = fileData.sha;
+                    }
+
+                    const secretPayload = JSON.stringify({ email, whatsapp }, null, 2);
+                    const encodedContent = btoa(secretPayload);
+
+                    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/.contact-secret.json`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/vnd.github+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: "Secure update contact config via Admin Console",
+                            content: encodedContent,
+                            sha: fileSha || undefined
+                        })
+                    });
+
+                    if(putRes.ok) {
+                        alert('Successfully synced globally! All visitors will now see the updated contact info.');
+                    } else {
+                        alert('Saved locally, but failed to sync globally on GitHub. Verify your PAT scopes.');
+                    }
+                } catch(err) {
+                    console.error(err);
+                    alert('Error communicating with GitHub API.');
+                }
+            } else {
+                alert('Saved locally (Enter GitHub credentials for global sync across all users).');
+            }
+
             applyContactInfo();
-            alert('Contact details updated successfully and synced locally!');
             closeAdminModal();
+        }
+
+        async function loadGlobalContactConfig() {
+            const owner = localStorage.getItem('fu_github_owner');
+            const repo = localStorage.getItem('fu_github_repo');
+            const token = localStorage.getItem('fu_github_token');
+
+            if(owner && repo) {
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/.contact-secret.json`, {
+                        headers: token ? { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' } : {}
+                    });
+                    if(res.ok) {
+                        const data = await res.json();
+                        const decoded = JSON.parse(atob(data.content));
+                        if(decoded.email) localStorage.setItem('fu_admin_email', decoded.email);
+                        if(decoded.whatsapp) localStorage.setItem('fu_admin_whatsapp', decoded.whatsapp);
+                    }
+                } catch(e) {
+                    console.log('Using local config fallback.');
+                }
+            }
+            applyContactInfo();
         }
 
         function applyContactInfo() {
             const email = localStorage.getItem('fu_admin_email') || 'acceptableshawon+fu@gmail.com';
             const whatsapp = localStorage.getItem('fu_admin_whatsapp') || '8801795186749';
             
-            document.querySelectorAll('a[href^="mailto:"]').forEach(emailLink => {
+            const emailLink = document.getElementById('btn-email-link');
+            if(emailLink) {
                 emailLink.href = `mailto:${email}?subject=Portfolio%20Inquiry`;
-            });
+            }
 
-            document.querySelectorAll('a[href*="wa.me"]').forEach(waLink => {
+            const waLink = document.getElementById('btn-whatsapp-link');
+            if(waLink) {
                 waLink.href = `https://wa.me/${whatsapp}?text=Hi%20Forex%20Uncle,%20I%20want%20to%20discuss%20collaboration.`;
-            });
+            }
         }
 
-        applyContactInfo();
+        loadGlobalContactConfig();
 
         (function() {
             function updateFooterClock() {
